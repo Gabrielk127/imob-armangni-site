@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Heart, Menu, UserRound, X } from 'lucide-react'
+import { Heart, Menu, X } from 'lucide-react'
 import { useFavorites } from '../context/FavoritesContext'
 
 const navigation = [
@@ -66,13 +66,6 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-6 lg:flex">
-          <button
-            type="button"
-            className="flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.14em] text-neutral-600 transition-colors hover:text-night-950"
-          >
-            <UserRound className="h-4 w-4" />
-            Área do cliente
-          </button>
           <Link
             to="/favoritos"
             className="relative flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.14em] text-neutral-600 transition-colors hover:text-night-950"

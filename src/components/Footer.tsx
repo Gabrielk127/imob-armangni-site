@@ -22,7 +22,6 @@ const columns = [
       { label: 'Avaliação de imóvel', to: '/#anunciar' },
       { label: 'Como comprar', to: '/#anunciar' },
       { label: 'Como alugar', to: '/imoveis?finalidade=aluguel' },
-      { label: 'Área do cliente', to: '#' },
     ],
   },
   {
