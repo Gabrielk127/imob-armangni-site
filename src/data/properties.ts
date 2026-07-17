@@ -556,5 +556,5 @@ export const testimonials = [
 
 export const WHATSAPP = '5543999990000'
 export const PHONE = '(43) 3025-0000'
-export const EMAIL = 'contato@aurumimoveis.com.br'
+export const EMAIL = 'contato@harasimoveis.com.br'
 export const ADDRESS = 'Avenida Winston Churchill, 500 · Gleba Palhano, Londrina'

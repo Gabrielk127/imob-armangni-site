@@ -16,7 +16,7 @@ export default function LegacySection() {
             <div className="flex h-full flex-col justify-between">
               <div className="flex items-center justify-between">
                 <span className="grid h-10 w-10 place-items-center border border-brand-400/60 font-display text-xl text-brand-400">
-                  A
+                  H
                 </span>
                 <span className="text-[10px] uppercase tracking-[0.4em] text-neutral-400">
                   Desde 2006
@@ -27,7 +27,7 @@ export default function LegacySection() {
                   <span className="text-7xl font-semibold text-brand-400">20</span>
                   <span className="ml-2 text-2xl uppercase tracking-[0.3em]">anos</span>
                 </p>
-                <p className="font-display text-lg tracking-[0.24em] text-neutral-300">AURUM</p>
+                <p className="font-display text-lg tracking-[0.24em] text-neutral-300">HARAS</p>
               </div>
             </div>
           </div>

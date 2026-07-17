@@ -21,7 +21,7 @@ export function Logo({ dark = false }: { dark?: boolean }) {
             : 'border-night-900 bg-night-950 text-brand-400'
         }`}
       >
-        A
+        H
       </span>
       <span className="leading-none">
         <span
@@ -29,7 +29,7 @@ export function Logo({ dark = false }: { dark?: boolean }) {
             dark ? 'text-white' : 'text-night-950'
           }`}
         >
-          AURUM
+          HARAS
         </span>
         <span
           className={`mt-1 block text-[10px] uppercase tracking-[0.42em] ${

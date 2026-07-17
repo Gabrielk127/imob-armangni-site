@@ -9,7 +9,7 @@ interface FavoritesValue {
 
 const FavoritesContext = createContext<FavoritesValue | null>(null)
 
-const STORAGE_KEY = 'aurum:favoritos'
+const STORAGE_KEY = 'haras:favoritos'
 
 function load(): string[] {
   try {

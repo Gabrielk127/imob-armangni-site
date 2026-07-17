@@ -61,7 +61,7 @@ export default function Listings() {
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <p className="mb-3 flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.45em] text-brand-500">
             <span className="h-px w-10 bg-brand-500/60" />
-            Portfólio Aurum
+            Portfólio Haras
           </p>
           <h1 className="font-display text-4xl font-medium text-night-950 sm:text-5xl">
             {type ?? heading}
