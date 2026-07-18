@@ -118,7 +118,18 @@ export default function Footer() {
 
         <div className="flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-neutral-500 md:flex-row md:items-center md:justify-between">
           <p>© 2026 Haras Imóveis · CRECI J-00000 · Todos os direitos reservados.</p>
-          <p>Alto padrão em Londrina desde 2006.</p>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+            <p>Alto padrão em Londrina desde 2006.</p>
+            <span className="hidden md:inline text-neutral-700">|</span>
+            <a
+              href="https://techdeploy.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-white"
+            >
+              Desenvolvido por TechDeploy
+            </a>
+          </div>
         </div>
       </div>
     </footer>
