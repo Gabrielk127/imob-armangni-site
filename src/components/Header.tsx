@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Heart, Menu, X } from 'lucide-react'
 import { useFavorites } from '../context/FavoritesContext'
+import { ArmangniMark } from './icons/ArmangniMark'
 
 const navigation = [
   { label: 'Comprar', to: '/imoveis?finalidade=venda' },
@@ -15,13 +16,13 @@ export function Logo({ dark = false }: { dark?: boolean }) {
   return (
     <Link to="/" className="group flex items-center gap-3">
       <span
-        className={`grid h-11 w-11 place-items-center border font-display text-2xl transition-colors ${
+        className={`grid h-11 w-11 place-items-center border transition-colors ${
           dark
             ? 'border-brand-400/60 bg-transparent text-brand-400'
             : 'border-night-900 bg-night-950 text-brand-400'
         }`}
       >
-        H
+        <ArmangniMark className="h-6 w-8" />
       </span>
       <span className="leading-none">
         <span
@@ -29,7 +30,7 @@ export function Logo({ dark = false }: { dark?: boolean }) {
             dark ? 'text-white' : 'text-night-950'
           }`}
         >
-          HARAS
+          ARMANGNI
         </span>
         <span
           className={`mt-1 block text-[10px] uppercase tracking-[0.42em] ${

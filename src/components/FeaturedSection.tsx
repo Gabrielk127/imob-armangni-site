@@ -22,7 +22,7 @@ export default function FeaturedSection() {
     <section className="bg-white py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Seleção Haras"
+          eyebrow="Seleção Armangni"
           title="Os imóveis mais desejados de Londrina."
           description="Uma curadoria criteriosa de residências que unem localização, arquitetura e exclusividade. Encontre o seu."
         />
