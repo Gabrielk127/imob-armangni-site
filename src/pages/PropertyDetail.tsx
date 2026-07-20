@@ -366,7 +366,7 @@ export default function PropertyDetail() {
             Nosso compromisso
           </p>
           <h2 className="max-w-2xl font-display text-3xl font-medium leading-tight text-white sm:text-4xl">
-            A Haras se preocupa em selecionar os imóveis a partir dos seguintes critérios:
+            A Armangni se preocupa em selecionar os imóveis a partir dos seguintes critérios:
           </h2>
           <ul className="mt-10 grid gap-x-10 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
             {criteria.map((item) => (
