@@ -1,7 +1,7 @@
-import { MessageCircle } from 'lucide-react'
-import { WHATSAPP } from '../data/properties'
+import { MessageCircle } from '@/components/icons'
+import { WHATSAPP } from '@/data/properties'
 
-export default function WhatsAppFloat() {
+export function WhatsAppFloat() {
   return (
     <a
       href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Olá! Gostaria de falar com um especialista.')}`}

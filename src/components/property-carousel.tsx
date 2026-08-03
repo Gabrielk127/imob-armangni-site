@@ -1,9 +1,9 @@
 import { useRef } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import type { Property } from '../data/properties'
-import PropertyCard from './PropertyCard'
+import { ChevronLeft, ChevronRight } from '@/components/icons'
+import type { Property } from '@/data/properties'
+import { PropertyCard } from '@/components/property-card'
 
-export default function PropertyCarousel({ properties }: { properties: Property[] }) {
+export function PropertyCarousel({ properties }: { properties: Property[] }) {
   const trackRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 1 | -1) => {

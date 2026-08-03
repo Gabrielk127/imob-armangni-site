@@ -1,49 +1,50 @@
-import { Link } from 'react-router-dom'
-import { Mail, MapPin, Phone } from 'lucide-react'
-import { ADDRESS, EMAIL, PHONE, WHATSAPP } from '../data/properties'
-import { Logo } from './Header'
-import { Facebook, Instagram, Linkedin, Youtube } from './icons/SocialIcons'
+import { Link } from '@tanstack/react-router'
+import { Mail, MapPin, Phone } from '@/components/icons'
+import { ADDRESS, EMAIL, PHONE, WHATSAPP, SOCIAL_LINKS, ANUNCIAR_WHATSAPP_LINK } from '@/data/properties'
+import { Logo } from '@/components/layout/header'
+import { Facebook, Instagram, Linkedin, Youtube } from '@/components/icons'
 
-const columns = [
+type FooterLink = {
+  label: string
+  to?: '/' | '/imoveis' | '/politica-de-privacidade'
+  search?: { finalidade: string }
+  hash?: string
+  href?: string
+}
+
+const columns: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Navegação',
     links: [
-      { label: 'Comprar', to: '/imoveis?finalidade=venda' },
-      { label: 'Alugar', to: '/imoveis?finalidade=aluguel' },
-      { label: 'Imóveis exclusivos', to: '/imoveis' },
-      { label: 'Anunciar imóvel', to: '/#anunciar' },
-      { label: 'Favoritos', to: '/favoritos' },
+      { label: 'Comprar', to: '/imoveis', search: { finalidade: 'venda' } },
+      { label: 'Alugar', to: '/imoveis', search: { finalidade: 'aluguel' } },
+      { label: 'Anunciar imóvel', href: ANUNCIAR_WHATSAPP_LINK },
     ],
   },
   {
     title: 'Serviços',
     links: [
       { label: 'Encontrar imóvel', to: '/imoveis' },
-      { label: 'Avaliação de imóvel', to: '/#anunciar' },
-      { label: 'Como comprar', to: '/#anunciar' },
-      { label: 'Como alugar', to: '/imoveis?finalidade=aluguel' },
+      { label: 'Como comprar', to: '/', hash: 'contato' },
     ],
   },
   {
     title: 'A imobiliária',
     links: [
-      { label: 'Nossa história', to: '/' },
-      { label: 'Fale conosco', to: '/#contato' },
-      { label: 'Blog', to: '#' },
-      { label: 'Trabalhe conosco', to: '#' },
-      { label: 'Política de privacidade', to: '#' },
+      { label: 'Fale conosco', to: '/', hash: 'contato' },
+      { label: 'Política de privacidade', to: '/politica-de-privacidade' },
     ],
   },
 ]
 
 const socials = [
-  { icon: Instagram, label: 'Instagram' },
-  { icon: Facebook, label: 'Facebook' },
-  { icon: Youtube, label: 'YouTube' },
-  { icon: Linkedin, label: 'LinkedIn' },
+  { icon: Instagram, label: 'Instagram', href: SOCIAL_LINKS.instagram },
+  { icon: Facebook, label: 'Facebook', href: SOCIAL_LINKS.facebook },
+  { icon: Youtube, label: 'YouTube', href: SOCIAL_LINKS.youtube },
+  { icon: Linkedin, label: 'LinkedIn', href: SOCIAL_LINKS.linkedin },
 ]
 
-export default function Footer() {
+export function Footer() {
   return (
     <footer id="contato" className="bg-night-950 text-neutral-400">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -51,16 +52,17 @@ export default function Footer() {
           <div className="max-w-sm">
             <Logo dark />
             <p className="mt-6 text-sm leading-relaxed text-neutral-400">
-              Referência em imóveis de alto padrão para comprar, vender ou alugar em Londrina.
-              Duas décadas transformando escolhas em conquistas.
+              Referência em imóveis de alto padrão para comprar ou vender em Londrina.
             </p>
             <div className="mt-6 flex items-center gap-3">
-              {socials.map(({ icon: Icon, label }) => (
+              {socials.map(({ icon: Icon, label, href }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
-                  className="grid h-10 w-10 place-items-center border border-white/15 text-neutral-400 transition-colors hover:border-brand-400 hover:text-brand-400"
+                  className="grid h-10 w-10 place-items-center border border-white/15 text-neutral-400 transition-colors hover:border-brand-400 hover:text-brand-400 cursor-pointer"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
@@ -77,12 +79,23 @@ export default function Footer() {
                 <ul className="mt-5 space-y-3">
                   {column.links.map((link) => (
                     <li key={link.label}>
-                      <Link
-                        to={link.to}
-                        className="text-sm text-neutral-400 transition-colors hover:text-white"
-                      >
-                        {link.label}
-                      </Link>
+                      {link.to ? (
+                        <Link
+                          to={link.to}
+                          search={link.search}
+                          hash={link.hash}
+                          className="text-sm text-neutral-400 transition-colors hover:text-white"
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          className="text-sm text-neutral-400 transition-colors hover:text-white"
+                        >
+                          {link.label}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -119,8 +132,6 @@ export default function Footer() {
         <div className="flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-neutral-500 md:flex-row md:items-center md:justify-between">
           <p>© 2026 Armangni Negócios Imobiliários · CRECI 8328 · Todos os direitos reservados.</p>
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-            <p>Alto padrão em Londrina desde 2006.</p>
-            <span className="hidden md:inline text-neutral-700">|</span>
             <a
               href="https://techdeploy.com.br"
               target="_blank"

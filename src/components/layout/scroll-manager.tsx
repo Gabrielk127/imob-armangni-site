@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from '@tanstack/react-router'
 
-export default function ScrollManager() {
+export function ScrollManager() {
   const { pathname, hash } = useLocation()
 
   useEffect(() => {
     if (hash) {
-      const el = document.querySelector(hash)
+      // no TanStack o hash vem sem o "#"
+      const el = document.querySelector(`#${hash.replace(/^#/, '')}`)
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' })
         return

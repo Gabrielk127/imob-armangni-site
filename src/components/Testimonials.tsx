@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react'
-import { testimonials } from '../data/properties'
-import SectionHeading from './SectionHeading'
+import { ChevronLeft, ChevronRight, Quote } from '@/components/icons'
+import { testimonials } from '@/data/properties'
+import { SectionHeading } from '@/components/section-heading'
 
-export default function Testimonials() {
+export function Testimonials() {
   const [active, setActive] = useState(0)
   const step = (delta: number) =>
     setActive((current) => (current + delta + testimonials.length) % testimonials.length)
