@@ -4,17 +4,17 @@
   --font-sans: "Jost", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Cormorant Garamond", "Times New Roman", Georgia, serif;
 
-  --color-brand-50: #fdf8ef;
-  --color-brand-100: #faedd4;
-  --color-brand-200: #f4d8a8;
-  --color-brand-300: #edbe74;
-  --color-brand-400: #e6a648;
-  --color-brand-500: #de9226;
-  --color-brand-600: #c4791a;
-  --color-brand-700: #9d5f16;
-  --color-brand-800: #7e4c17;
-  --color-brand-900: #683f16;
-  --color-brand-950: #3b2109;
+  --color-brand-50: #f8f6f4;
+  --color-brand-100: #efece8;
+  --color-brand-200: #dfd8d0;
+  --color-brand-300: #cfc5b8;
+  --color-brand-400: #c7bbae;
+  --color-brand-500: #bfb4aa;
+  --color-brand-600: #a89c91;
+  --color-brand-700: #8a7e73;
+  --color-brand-800: #6e645a;
+  --color-brand-900: #544c44;
+  --color-brand-950: #332d28;
 
   --color-night-700: #26262b;
   --color-night-800: #1c1c20;
@@ -31,6 +31,20 @@
     @apply bg-white font-sans text-neutral-700 antialiased;
   }
 
+  button,
+  a,
+  select,
+  summary,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  label,
+  [role="button"] {
+    cursor: pointer;
+  }
+
   ::selection {
     @apply bg-brand-500/90 text-white;
   }
@@ -41,4 +55,20 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+@keyframes kenburns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate(-1%, -1%);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+.kenburns {
+  animation: kenburns 25s ease-in-out infinite alternate;
 }

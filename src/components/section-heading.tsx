@@ -6,7 +6,7 @@ interface SectionHeadingProps {
   dark?: boolean
 }
 
-export default function SectionHeading({
+export function SectionHeading({
   eyebrow,
   title,
   description,
