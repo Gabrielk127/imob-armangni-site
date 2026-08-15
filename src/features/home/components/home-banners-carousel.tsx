@@ -186,17 +186,28 @@ export function HomeBannersCarousel() {
           {/* Indicator Dots */}
           <div className="absolute top-6 right-6 z-20 flex items-center gap-2">
             {slides.map((slide, idx) => (
+              /*
+                O ponto continua com 8px, mas o alvo de toque não: o botão
+                ganha 44px de altura e o traço fica num <span> interno. Antes o
+                clicável era o próprio ponto de 8×8 — metade do mínimo
+                recomendado, e difícil de acertar com o polegar.
+              */
               <button
                 key={slide.id}
                 type="button"
                 onClick={() => goToSlide(idx)}
                 aria-label={`Ir para o slide ${idx + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  idx === currentIndex
-                    ? 'w-8 bg-[#BFB4AA]'
-                    : 'w-2 bg-white/40 hover:bg-white/70'
-                }`}
-              />
+                aria-current={idx === currentIndex}
+                className="flex h-11 items-center px-1"
+              >
+                <span
+                  className={`block h-2 rounded-full transition-all duration-300 ${
+                    idx === currentIndex
+                      ? 'w-8 bg-[#BFB4AA]'
+                      : 'w-2 bg-white/40 hover:bg-white/70'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>

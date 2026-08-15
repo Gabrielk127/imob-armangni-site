@@ -1,0 +1,13 @@
+# Armangni Negócios Imobiliários
+#
+# O site é uma vitrine pública: tudo pode ser indexado. Não havia robots.txt
+# aqui, e o fallback da SPA devolvia o index.html para /robots.txt — um HTML
+# no lugar do arquivo, que os rastreadores tratam como inválido.
+
+User-agent: *
+Allow: /
+
+# O sitemap precisa ser servido pelo domínio do site. Como as páginas de
+# imóvel são dinâmicas, ele vem da API pública: configure no host um rewrite
+# de /sitemap.xml para <API>/public/sitemap.xml e descomente a linha abaixo.
+# Sitemap: https://www.armangni.com.br/sitemap.xml

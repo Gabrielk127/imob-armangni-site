@@ -67,7 +67,8 @@ export function Listings() {
         ? (['price', 'asc'] as const)
         : (['price', 'desc'] as const)
 
-  const { data } = usePropertiesList({
+  const { data, isPending, isPaused, isError, isPlaceholderData, refetch } =
+    usePropertiesList({
     page,
     limit: PAGE_SIZE,
     search: query || undefined,
@@ -329,15 +330,66 @@ export function Listings() {
               )}
 
               {/* Grid de Imóveis (3 cards por linha) */}
-              {pageItems.length === 0 ? (
+              {isPending && !isPaused ? (
+                <div
+                  className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                  aria-busy="true"
+                  aria-label="Carregando imóveis"
+                >
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <div
+                      key={i}
+                      className="overflow-hidden rounded-2xl border border-neutral-200 bg-white"
+                    >
+                      <div className="aspect-[4/3] w-full animate-pulse bg-neutral-100" />
+                      <div className="space-y-3 p-5">
+                        <div className="h-3 w-24 animate-pulse rounded bg-neutral-100" />
+                        <div className="h-5 w-3/4 animate-pulse rounded bg-neutral-100" />
+                        <div className="h-4 w-1/2 animate-pulse rounded bg-neutral-100" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : isError || isPaused ? (
+                <div className="rounded-2xl border border-neutral-200 bg-white py-24 text-center">
+                  <p className="font-display text-3xl text-night-950">
+                    Não foi possível carregar os imóveis.
+                  </p>
+                  <p className="mt-3 text-sm text-neutral-500">
+                    {isPaused
+                      ? 'Você parece estar sem conexão. Assim que a internet voltar, tente de novo.'
+                      : 'Verifique sua conexão e tente novamente.'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void refetch()}
+                    className="mt-6 border border-night-950 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-night-950 transition-colors hover:bg-night-950 hover:text-white"
+                  >
+                    Tentar novamente
+                  </button>
+                </div>
+              ) : pageItems.length === 0 ? (
                 <div className="rounded-2xl border border-neutral-200 bg-white py-24 text-center">
                   <p className="font-display text-3xl text-night-950">Nenhum imóvel encontrado.</p>
                   <p className="mt-3 text-sm text-neutral-500">
                     Ajuste os filtros laterais ou fale com um de nossos especialistas.
                   </p>
+                  {activeFiltersCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setParams(new URLSearchParams())}
+                      className="mt-6 border border-night-950 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-night-950 transition-colors hover:bg-night-950 hover:text-white"
+                    >
+                      Limpar filtros
+                    </button>
+                  )}
                 </div>
               ) : (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div
+                  className={`grid gap-6 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${
+                    isPlaceholderData ? 'opacity-60' : ''
+                  }`}
+                >
                   {pageItems.map((property) => (
                     <PropertyCard key={property.code} property={property} />
                   ))}

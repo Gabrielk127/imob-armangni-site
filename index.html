@@ -5,31 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!--
-      As fotos de vitrine vêm do Unsplash, e a maior delas é o hero — o
-      elemento de LCP da home. Sem este preconnect, DNS, TCP e TLS só começam
-      quando o React já montou a <img>.
-    -->
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
 
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
-      rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
+      />
+    </noscript>
 
-    <!--
-      Preload do hero.
-
-      Numa SPA o maior elemento da primeira dobra é invisível para o
-      preload-scanner: ele mora dentro de um componente React e só vira uma
-      requisição depois que o bundle baixa, avalia e renderiza. Declarando aqui,
-      o download começa junto com o HTML.
-
-      `imagesrcset`/`imagesizes` repetem o que o <img> usa, para o navegador
-      escolher a mesma largura e reaproveitar a resposta em vez de baixar duas.
-      Fonte da verdade: `imgSrcSet` e `IMAGE_IDS.heroNight` em
-      `src/data/properties.ts` — mudou lá, muda aqui.
-    -->
     <link
       rel="preload"
       as="image"
@@ -51,12 +46,6 @@
 
     <title>Armangni Negócios Imobiliários · Alto padrão em Londrina</title>
 
-    <!--
-      Só o que não muda entre rotas fica aqui. `title`, `description`,
-      `og:title` e `og:description` são declarados por rota em `lib/seo.ts`:
-      mantê-los também neste arquivo produzia a tag duplicada, e o rastreador
-      lê a primeira — ou seja, a estática venceria a da rota sempre.
-    -->
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pt_BR" />
     <meta
