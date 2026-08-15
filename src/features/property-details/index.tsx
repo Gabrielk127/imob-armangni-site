@@ -376,7 +376,13 @@ export function PropertyDetails() {
                   <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brand-500">
                     Valor do imóvel
                   </span>
-                  <p className="mt-2 font-sans text-3xl sm:text-4xl font-bold tracking-tight text-night-950">
+                  <p
+                    className={`mt-2 font-sans tracking-tight text-night-950 ${
+                      !property.price || property.price <= 0
+                        ? 'text-2xl italic font-normal text-neutral-500'
+                        : 'text-3xl sm:text-4xl font-bold'
+                    }`}
+                  >
                     {formatPrice(property)}
                   </p>
                   {property.condoFee && (

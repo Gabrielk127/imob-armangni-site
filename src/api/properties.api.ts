@@ -104,7 +104,9 @@ function mainUnit(units: PublicUnit[]): PublicUnit | undefined {
 }
 
 function priceOf(unit?: PublicUnit): number | null {
-  return unit?.salePrice ?? unit?.rentPrice ?? null
+  const price = unit?.salePrice || unit?.rentPrice || null
+  if (!price || price <= 0) return null
+  return price
 }
 
 /** Em localização aproximada a API não envia rua nem número. */

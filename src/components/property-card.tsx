@@ -128,7 +128,7 @@ export function PropertyCard({ property }: { property: Property }) {
         <div className="border-b border-neutral-100 pb-3">
           <p
             className={`font-sans text-night-950 ${
-              property.price == null
+              !property.price || property.price <= 0
                 ? 'text-lg italic font-normal text-neutral-500'
                 : 'text-2xl font-bold tracking-tight'
             }`}
