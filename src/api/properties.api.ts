@@ -34,6 +34,7 @@ interface PublicPropertyListItem {
   code: string
   title: string
   description: string | null
+  videoUrl?: string | null
   purpose: 'SALE' | 'RENT' | 'SALE_AND_RENT'
   isFeatured: boolean
   type: { id: string; name: string } | null
@@ -150,6 +151,7 @@ function toProperty(
     images: extra.images ?? (item.coverImage ? [item.coverImage] : []),
     thumbnails: extra.thumbnails,
     featured: item.isFeatured,
+    videoUrl: item.videoUrl ?? undefined,
     features: extra.features ?? [],
     condoFeatures: extra.condoFeatures,
   }

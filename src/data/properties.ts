@@ -31,6 +31,7 @@ export interface Property {
    */
   thumbnails?: string[]
   featured?: boolean
+  videoUrl?: string
   features: string[]
   condoFeatures?: string[]
 }

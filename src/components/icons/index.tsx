@@ -39,6 +39,7 @@ export { default as DollarSign } from '~icons/solar/dollar-minimalistic-linear'
 export { default as FileText } from '~icons/solar/document-text-linear'
 export { default as Clock } from '~icons/solar/clock-circle-linear'
 export { default as Calendar } from '~icons/solar/calendar-linear'
+export { default as Play } from '~icons/solar/play-linear'
 
 // ── Contato e social ──
 export { default as Phone } from '~icons/solar/phone-linear'

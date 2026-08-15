@@ -21,6 +21,7 @@ import { usePropertyDetails } from '@/hooks/use-property-details'
 import { formatArea, formatPrice } from '@/lib/format'
 import { PropertyCarousel } from '@/components/property-carousel'
 import { SectionHeading } from '@/components/section-heading'
+import { VideoSection } from '@/components/video-section'
 import { Facebook, Instagram } from '@/components/icons'
 
 export function PropertyDetails() {
@@ -277,6 +278,20 @@ export function PropertyDetails() {
                   Os valores e informações anunciados podem sofrer alterações sem aviso prévio.
                 </p>
               </div>
+
+              {/* Video Section */}
+              {property.videoUrl && (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm space-y-4 overflow-hidden">
+                  <h2 className="font-display text-2xl font-medium text-night-950">
+                    Tour Virtual (Vídeo)
+                  </h2>
+                  <VideoSection
+                    title="Vídeo do Imóvel"
+                    subtitle="Assista ao vídeo exclusivo e conheça cada detalhe"
+                    videoUrl={property.videoUrl}
+                  />
+                </div>
+              )}
 
               {/* Features List */}
               <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm space-y-4">
