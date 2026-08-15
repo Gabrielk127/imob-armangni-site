@@ -25,7 +25,7 @@ interface PublicUnit {
   suites: number | null
   bathrooms: number | null
   parkingSpaces: number | null
-  images?: { url: string }[]
+  images?: { url: string; thumbnailUrl?: string }[]
   features?: { name: string; value: string; group: string }[]
 }
 
@@ -48,13 +48,13 @@ interface PublicCondominium {
   name: string
   description: string | null
   address: PublicAddress | null
-  images: { url: string }[]
+  images: { url: string; thumbnailUrl?: string }[]
   amenities: { name: string; value: string; group: string }[]
 }
 
 interface PublicPropertyDetail
   extends Omit<PublicPropertyListItem, 'coverImage' | 'condominium'> {
-  images: { url: string }[]
+  images: { url: string; thumbnailUrl?: string }[]
   condominium: PublicCondominium | null
 }
 
@@ -124,6 +124,7 @@ function toProperty(
   item: PublicPropertyListItem,
   extra: {
     images?: string[]
+    thumbnails?: string[]
     features?: string[]
     condoFeatures?: string[]
   } = {}
@@ -147,6 +148,7 @@ function toProperty(
     suites: unit?.suites ?? undefined,
     parking: unit?.parkingSpaces ?? undefined,
     images: extra.images ?? (item.coverImage ? [item.coverImage] : []),
+    thumbnails: extra.thumbnails,
     featured: item.isFeatured,
     features: extra.features ?? [],
     condoFeatures: extra.condoFeatures,
@@ -176,12 +178,17 @@ export const findPropertyByCode = async (
     `/public/properties/${encodeURIComponent(code)}`
   )
 
-  const unitImages = detail.units.flatMap((unit) =>
-    (unit.images ?? []).map((image) => image.url)
-  )
+  // As fotos do imóvel primeiro, depois as das unidades. As duas listas andam
+  // em paralelo — `images` para a galeria em tamanho grande e `thumbnails`
+  // para a tira de seleção, que renderiza todas de uma vez num quadro de 112px.
+  const all = [
+    ...detail.images,
+    ...detail.units.flatMap((unit) => unit.images ?? []),
+  ]
 
   return toProperty(detail as unknown as PublicPropertyListItem, {
-    images: [...detail.images.map((image) => image.url), ...unitImages],
+    images: all.map((image) => image.url),
+    thumbnails: all.map((image) => image.thumbnailUrl ?? image.url),
     // atributos booleanos entram só com o nome; os demais como "nome: valor"
     features: detail.units
       .flatMap((unit) => unit.features ?? [])

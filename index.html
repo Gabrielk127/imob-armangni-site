@@ -3,20 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Armangni Negócios Imobiliários — Referência em imóveis de alto padrão para comprar, vender ou alugar em Londrina."
-    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      As fotos de vitrine vêm do Unsplash, e a maior delas é o hero — o
+      elemento de LCP da home. Sem este preconnect, DNS, TCP e TLS só começam
+      quando o React já montou a <img>.
+    -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
       rel="stylesheet"
     />
+
+    <!--
+      Preload do hero.
+
+      Numa SPA o maior elemento da primeira dobra é invisível para o
+      preload-scanner: ele mora dentro de um componente React e só vira uma
+      requisição depois que o bundle baixa, avalia e renderiza. Declarando aqui,
+      o download começa junto com o HTML.
+
+      `imagesrcset`/`imagesizes` repetem o que o <img> usa, para o navegador
+      escolher a mesma largura e reaproveitar a resposta em vez de baixar duas.
+      Fonte da verdade: `imgSrcSet` e `IMAGE_IDS.heroNight` em
+      `src/data/properties.ts` — mudou lá, muda aqui.
+    -->
+    <link
+      rel="preload"
+      as="image"
+      fetchpriority="high"
+      href="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&amp;fit=crop&amp;w=1400&amp;q=80"
+      imagesrcset="
+        https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&amp;fit=crop&amp;w=640&amp;q=80 640w,
+        https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&amp;fit=crop&amp;w=960&amp;q=80 960w,
+        https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&amp;fit=crop&amp;w=1400&amp;q=80 1400w,
+        https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&amp;fit=crop&amp;w=1920&amp;q=80 1920w,
+        https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&amp;fit=crop&amp;w=2560&amp;q=80 2560w
+      "
+      imagesizes="100vw"
+    />
+
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/favicon.ico" />
+
     <title>Armangni Negócios Imobiliários · Alto padrão em Londrina</title>
+
+    <!--
+      Só o que não muda entre rotas fica aqui. `title`, `description`,
+      `og:title` e `og:description` são declarados por rota em `lib/seo.ts`:
+      mantê-los também neste arquivo produzia a tag duplicada, e o rastreador
+      lê a primeira — ou seja, a estática venceria a da rota sempre.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta
+      property="og:site_name"
+      content="Armangni Negócios Imobiliários"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

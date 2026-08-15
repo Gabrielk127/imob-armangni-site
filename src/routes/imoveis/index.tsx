@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { head } from '@/lib/seo'
 import { Listings } from '@/features/listings'
 
 /** Filtros da busca, mantidos na URL com os mesmos nomes de sempre. */
@@ -40,5 +41,11 @@ export const Route = createFileRoute('/imoveis/')({
         (key) => [key, String(search[key])]
       )
     ),
+  head: () =>
+    head({
+      title: 'Imóveis à venda e para alugar em Londrina',
+      description:
+        'Apartamentos, casas, sobrados e terrenos de alto padrão em Londrina. Filtre por bairro, valor, área e número de quartos.',
+    }),
   component: Listings,
 })

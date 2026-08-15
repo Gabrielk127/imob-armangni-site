@@ -1,17 +1,26 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import type { QueryClient } from '@tanstack/react-query'
+import {
+  HeadContent,
+  Outlet,
+  createRootRouteWithContext,
+} from '@tanstack/react-router'
 import { Footer } from '@/components/layout/footer'
 import { Header } from '@/components/layout/header'
 import { ScrollManager } from '@/components/layout/scroll-manager'
 import { WhatsAppFloat } from '@/components/layout/whatsapp-float'
 
 /** Casca do site: a mesma que ficava no antigo `App.tsx`. */
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient
+}>()({
   component: RootLayout,
 })
 
 function RootLayout() {
   return (
     <>
+      {/* Aplica o `head` declarado por cada rota — ver `lib/seo.ts`. */}
+      <HeadContent />
       <ScrollManager />
       <div className='flex min-h-screen flex-col'>
         <Header />

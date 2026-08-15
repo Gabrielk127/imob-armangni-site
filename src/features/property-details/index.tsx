@@ -32,6 +32,10 @@ export function PropertyDetails() {
   const [lightboxIndex, setLightboxIndex] = useState(0)
 
   const images = property?.images && property.images.length > 0 ? property.images : []
+  // A tira de seleção mostra as fotos num quadro de 112px; a API serve uma
+  // versão nessa largura. Sem isso, abrir um imóvel com doze fotos baixava as
+  // doze na largura de galeria só para desenhar as miniaturas.
+  const thumbnails = property?.thumbnails ?? images
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index)
@@ -227,8 +231,12 @@ export function PropertyDetails() {
                         }`}
                       >
                         <img
-                          src={img}
+                          src={thumbnails[index] ?? img}
                           alt=""
+                          loading="lazy"
+                          decoding="async"
+                          width={112}
+                          height={80}
                           className="h-full w-full object-cover"
                         />
                       </button>

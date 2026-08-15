@@ -25,6 +25,11 @@ export interface Property {
   suites?: number
   parking?: number
   images: string[]
+  /**
+   * Mesmas fotos de `images`, na largura de miniatura servida pela API.
+   * Ausente nos dados de exemplo — quem consome cai de volta em `images`.
+   */
+  thumbnails?: string[]
   featured?: boolean
   features: string[]
   condoFeatures?: string[]
@@ -32,6 +37,27 @@ export interface Property {
 
 const img = (id: string, w = 1400) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`
+
+/** Larguras servidas no `srcset` — cobrem de celular a desktop 2x. */
+const SRCSET_WIDTHS = [640, 960, 1400, 1920, 2560] as const
+
+/**
+ * `srcset` para as fotos de vitrine.
+ *
+ * O `src` sozinho entrega a mesma imagem para todo mundo: o hero pedia 2100px
+ * de largura, e um celular baixava 250 kB onde 49 kB dariam o mesmo resultado
+ * na tela. Como é o maior elemento da primeira dobra, esse peso caía direto no
+ * LCP. Com o `srcset` o navegador escolhe a largura pelo viewport e pelo DPR.
+ */
+export const imgSrcSet = (id: string) =>
+  SRCSET_WIDTHS.map((w) => `${img(id, w)} ${w}w`).join(', ')
+
+/** Ids das fotos, para montar `srcset` além do `src` pronto em IMAGES. */
+export const IMAGE_IDS = {
+  heroNight: 'photo-1613490493576-7fde63acd811',
+  heroLiving: 'photo-1618221195710-dd6b41faaea6',
+  heroPool: 'photo-1600596542815-ffad4c1539a9',
+} as const
 
 export const IMAGES = {
   heroNight: img('photo-1613490493576-7fde63acd811', 2100),

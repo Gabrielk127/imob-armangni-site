@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowDown } from '@/components/icons'
-import { IMAGES } from '@/data/properties'
+import { IMAGES, IMAGE_IDS, imgSrcSet } from '@/data/properties'
 import { SearchPanel } from '@/components/search-panel'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -30,9 +30,13 @@ export function Hero() {
       >
         <img
           src={IMAGES.heroNight}
+          srcSet={imgSrcSet(IMAGE_IDS.heroNight)}
+          // O hero ocupa a largura toda da viewport em qualquer breakpoint.
+          sizes="100vw"
           alt="Imóveis de alto padrão Armangni"
           className="kenburns h-full w-full object-cover object-[center_42%]"
           fetchPriority="high"
+          decoding="async"
         />
         {/* Vertical scrim gradient overlay */}
         <div
