@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useListingsSearch } from '@/hooks/use-listings-search'
-import { ChevronDown, Map, Search, SlidersHorizontal, X } from '@/components/icons'
+import { ChevronDown, ChevronLeft, ChevronRight, Map, Search, SlidersHorizontal, X } from '@/components/icons'
 import { usePropertiesList } from '@/hooks/use-properties-list'
 import { usePropertyTypes } from '@/hooks/use-property-facets'
 import { PropertyCard } from '@/components/property-card'
@@ -15,6 +15,25 @@ type SortKey = 'preco-desc' | 'preco-asc' | 'area-desc'
 function toNumber(value?: string) {
   const parsed = Number(value)
   return value && Number.isFinite(parsed) ? parsed : undefined
+}
+
+function getPaginationRange(currentPage: number, totalPages: number) {
+  const delta = 1
+  const range: (number | 'ellipsis')[] = []
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (
+      i === 1 ||
+      i === totalPages ||
+      (i >= currentPage - delta && i <= currentPage + delta)
+    ) {
+      range.push(i)
+    } else if (range[range.length - 1] !== 'ellipsis') {
+      range.push('ellipsis')
+    }
+  }
+
+  return range
 }
 
 const sortLabels: Record<SortKey, string> = {
@@ -398,24 +417,63 @@ export function Listings() {
 
               {/* Paginação */}
               {totalPages > 1 && (
-                <nav className="pt-6 flex items-center justify-center gap-2" aria-label="Paginação">
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() => {
-                        setPage(n)
+                <nav className="pt-8 flex items-center justify-center gap-2" aria-label="Paginação">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (page > 1) {
+                        setPage(page - 1)
                         window.scrollTo({ top: 0, behavior: 'smooth' })
-                      }}
-                      className={`grid h-10 w-10 place-items-center rounded-xl text-sm font-medium transition-colors ${
-                        n === page
-                          ? 'bg-night-950 text-white shadow-sm'
-                          : 'border border-neutral-200 bg-white text-neutral-600 hover:border-night-950 hover:text-night-950'
-                      }`}
-                    >
-                      {n}
-                    </button>
-                  ))}
+                      }
+                    }}
+                    disabled={page === 1}
+                    aria-label="Página anterior"
+                    className="grid h-10 w-10 place-items-center rounded-xl border border-neutral-200 bg-white text-neutral-600 transition-colors hover:border-night-950 hover:text-night-950 disabled:pointer-events-none disabled:opacity-40"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+
+                  {getPaginationRange(page, totalPages).map((item, idx) =>
+                    item === 'ellipsis' ? (
+                      <span
+                        key={`ellipsis-${idx}`}
+                        className="grid h-10 w-8 place-items-center text-sm font-medium text-neutral-400 select-none"
+                      >
+                        •••
+                      </span>
+                    ) : (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => {
+                          setPage(item)
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
+                        className={`grid h-10 w-10 place-items-center rounded-xl text-sm font-medium transition-colors ${
+                          item === page
+                            ? 'bg-night-950 text-white shadow-sm'
+                            : 'border border-neutral-200 bg-white text-neutral-600 hover:border-night-950 hover:text-night-950'
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    )
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (page < totalPages) {
+                        setPage(page + 1)
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                      }
+                    }}
+                    disabled={page === totalPages}
+                    aria-label="Próxima página"
+                    className="grid h-10 w-10 place-items-center rounded-xl border border-neutral-200 bg-white text-neutral-600 transition-colors hover:border-night-950 hover:text-night-950 disabled:pointer-events-none disabled:opacity-40"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
                 </nav>
               )}
             </main>
