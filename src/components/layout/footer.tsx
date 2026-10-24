@@ -16,23 +16,23 @@ const columns: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Navegação',
     links: [
-      { label: 'Comprar', to: '/imoveis', search: { finalidade: 'venda' } },
-      { label: 'Alugar', to: '/imoveis', search: { finalidade: 'aluguel' } },
-      { label: 'Anunciar imóvel', href: ANUNCIAR_WHATSAPP_LINK },
+      { label: 'Comprar Imóveis', to: '/imoveis', search: { finalidade: 'venda' } },
+      { label: 'Alugar Imóveis', to: '/imoveis', search: { finalidade: 'aluguel' } },
+      { label: 'Anunciar Imóvel', href: ANUNCIAR_WHATSAPP_LINK },
     ],
   },
   {
     title: 'Serviços',
     links: [
-      { label: 'Encontrar imóvel', to: '/imoveis' },
-      { label: 'Como comprar', to: '/', hash: 'contato' },
+      { label: 'Catálogo de Imóveis', to: '/imoveis' },
+      { label: 'Avaliação Patrimonial', to: '/', hash: 'contato' },
     ],
   },
   {
-    title: 'A imobiliária',
+    title: 'Institucional',
     links: [
-      { label: 'Fale conosco', to: '/', hash: 'contato' },
-      { label: 'Política de privacidade', to: '/politica-de-privacidade' },
+      { label: 'Fale Conosco', to: '/', hash: 'contato' },
+      { label: 'Política de Privacidade', to: '/politica-de-privacidade' },
     ],
   },
 ]
@@ -46,15 +46,15 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer id="contato" className="bg-night-950 text-neutral-400">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-10 border-b border-white/10 pb-12 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-sm">
+    <footer className="bg-night-950 text-neutral-300">
+      <div className="container-page py-16">
+        <div className="flex flex-col gap-10 pb-12 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-sm space-y-5">
             <Logo dark />
-            <p className="mt-6 text-sm leading-relaxed text-neutral-400">
-              Referência em imóveis de alto padrão para comprar ou vender em Londrina.
+            <p className="text-body font-light leading-relaxed text-neutral-300">
+              Referência em assessoria e imóveis de alto padrão em Londrina, Gleba Palhano e região.
             </p>
-            <div className="mt-6 flex items-center gap-3">
+            <div className="flex items-center gap-2.5 pt-2">
               {socials.map(({ icon: Icon, label, href }) => (
                 <a
                   key={label}
@@ -62,7 +62,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="grid h-10 w-10 place-items-center border border-white/15 text-neutral-400 transition-colors hover:border-brand-400 hover:text-brand-400 cursor-pointer"
+                  className="grid h-11 w-11 place-items-center rounded-card border border-white/15 text-neutral-300 transition-colors hover:border-brand-400 hover:text-white"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
@@ -70,13 +70,13 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="grid flex-1 grid-cols-2 gap-10 sm:grid-cols-3 lg:max-w-2xl">
+          <div className="grid flex-1 grid-cols-2 gap-8 sm:grid-cols-3 lg:max-w-2xl">
             {columns.map((column) => (
-              <div key={column.title}>
-                <h3 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-brand-400">
+              <div key={column.title} className="space-y-4">
+                <h3 className="text-small font-semibold tracking-wider text-brand-300">
                   {column.title}
                 </h3>
-                <ul className="mt-5 space-y-3">
+                <ul className="space-y-3">
                   {column.links.map((link) => (
                     <li key={link.label}>
                       {link.to ? (
@@ -84,14 +84,16 @@ export function Footer() {
                           to={link.to}
                           search={link.search}
                           hash={link.hash}
-                          className="text-sm text-neutral-400 transition-colors hover:text-white"
+                          className="text-small text-neutral-300 transition-colors hover:text-white"
                         >
                           {link.label}
                         </Link>
                       ) : (
                         <a
                           href={link.href}
-                          className="text-sm text-neutral-400 transition-colors hover:text-white"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-small text-neutral-300 transition-colors hover:text-white"
                         >
                           {link.label}
                         </a>
@@ -104,10 +106,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-6 py-8 text-sm md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-5 py-8 text-small text-neutral-300 md:flex-row md:items-center md:justify-between">
           <p className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-brand-400" />
-            {ADDRESS}
+            <MapPin className="h-4 w-4 text-brand-400 shrink-0" />
+            <span>{ADDRESS}</span>
           </p>
           <div className="flex flex-wrap items-center gap-6">
             <a
@@ -116,31 +118,29 @@ export function Footer() {
               rel="noreferrer"
               className="flex items-center gap-2 transition-colors hover:text-white"
             >
-              <Phone className="h-4 w-4 text-brand-400" />
-              {PHONE}
+              <Phone className="h-4 w-4 text-brand-400 shrink-0" />
+              <span>{PHONE}</span>
             </a>
             <a
               href={`mailto:${EMAIL}`}
               className="flex items-center gap-2 transition-colors hover:text-white"
             >
-              <Mail className="h-4 w-4 text-brand-400" />
-              {EMAIL}
+              <Mail className="h-4 w-4 text-brand-400 shrink-0" />
+              <span>{EMAIL}</span>
             </a>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-neutral-500 md:flex-row md:items-center md:justify-between">
-          <p>© 2026 Armangni Negócios Imobiliários · CRECI 8328 · Todos os direitos reservados.</p>
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-            <a
-              href="https://techdeploy.com.br"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-white"
-            >
-              Desenvolvido por TechDeploy
-            </a>
-          </div>
+        <div className="flex flex-col gap-3 pt-8 text-small text-neutral-400 md:flex-row md:items-center md:justify-between">
+          <p>© 2026 Armangni Negócios Imobiliários · Creci 8328-J · Todos os direitos reservados.</p>
+          <a
+            href="https://techdeploy.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-white"
+          >
+            Desenvolvido por TechDeploy
+          </a>
         </div>
       </div>
     </footer>

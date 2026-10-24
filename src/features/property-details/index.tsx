@@ -14,6 +14,8 @@ import {
   ShowerHead,
   Camera,
   X,
+  Facebook,
+  Instagram,
 } from '@/components/icons'
 import { WHATSAPP, SOCIAL_LINKS } from '@/data/properties'
 import { usePropertiesList } from '@/hooks/use-properties-list'
@@ -22,20 +24,17 @@ import { formatArea, formatPrice } from '@/lib/format'
 import { PropertyCarousel } from '@/components/property-carousel'
 import { SectionHeading } from '@/components/section-heading'
 import { VideoSection } from '@/components/video-section'
-import { Facebook, Instagram } from '@/components/icons'
+import { buttonClass } from '@/components/ui/button'
 
 export function PropertyDetails() {
   const { code } = useParams({ from: '/imovel/$code' })
   const { data: property, isPending } = usePropertyDetails(code)
-  const { data: related } = usePropertiesList({ limit: 7, sortBy: 'relevance' })
+  const { data: related } = usePropertiesList({ limit: 8, sortBy: 'relevance' })
   const [activeImage, setActiveImage] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
 
   const images = property?.images && property.images.length > 0 ? property.images : []
-  // A tira de seleção mostra as fotos num quadro de 112px; a API serve uma
-  // versão nessa largura. Sem isso, abrir um imóvel com doze fotos baixava as
-  // doze na largura de galeria só para desenhar as miniaturas.
   const thumbnails = property?.thumbnails ?? images
 
   const openLightbox = (index: number) => {
@@ -53,7 +52,7 @@ export function PropertyDetails() {
     setLightboxIndex((i) => (i + 1) % images.length)
   }, [images.length])
 
-  // Keyboard navigation & body scroll lock for lightbox
+  // Navegação por teclado e trava de scroll no body durante o lightbox
   useEffect(() => {
     if (!lightboxOpen) return
 
@@ -92,7 +91,6 @@ export function PropertyDetails() {
     `Olá! Tenho interesse no imóvel ${property.title} (Ref ${property.code}) - ${property.subtitle}.`
   )}`
 
-
   const mapQuery = encodeURIComponent(
     property.address ? `${property.address}, Brasil` : `${property.neighborhood}, ${property.city}, Brasil`
   )
@@ -100,60 +98,60 @@ export function PropertyDetails() {
   const mapLinkUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
 
   return (
-    <div className="min-h-screen bg-neutral-50/60 pt-24 sm:pt-28">
-      {/* Header Info Section */}
-      <section className="border-b border-neutral-200 bg-white py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Breadcrumb */}
-          <nav className="mb-3 flex items-center gap-2 text-xs text-neutral-400">
-            <Link to="/" className="hover:text-night-950 transition-colors">
+    <div className="min-h-screen bg-paper pt-24 sm:pt-28 pb-28 lg:pb-20">
+      {/* Topo / Cabeçalho do Imóvel */}
+      <section className="bg-surface/60 py-8">
+        <div className="container-page">
+          {/* Breadcrumbs */}
+          <nav aria-label="Navegação estrutural" className="mb-3 flex items-center gap-2 text-small text-muted">
+            <Link to="/" className="hover:text-ink transition-colors">
               Início
             </Link>
             <span>/</span>
-            <Link to="/imoveis" className="hover:text-night-950 transition-colors">
+            <Link to="/imoveis" className="hover:text-ink transition-colors">
               Imóveis
             </Link>
             <span>/</span>
-            <span className="truncate max-w-[200px] sm:max-w-xs text-neutral-600 font-medium">
+            <span className="truncate max-w-[220px] sm:max-w-md font-medium text-ink">
               {property.title}
             </span>
           </nav>
 
-          {/* Title & Badges */}
+          {/* Título & Badges */}
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-display text-3xl font-medium leading-tight text-night-950 sm:text-4xl">
+            <h1 className="font-display text-head font-light leading-[1.08] tracking-tight text-ink">
               {property.title} {property.suites ? `com ${property.suites} suítes` : ''}
             </h1>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md bg-night-950 px-2.5 py-1 text-[10px] font-bold tracking-widest text-white uppercase">
-                CÓD. {property.code}
+              <span className="rounded-card bg-night-950 px-3 py-1 text-small font-semibold tracking-wide text-white">
+                Cód. {property.code}
               </span>
-              <span className="rounded-md border border-brand-500/40 bg-brand-50 px-2.5 py-1 text-[10px] font-bold tracking-wider text-brand-900 uppercase">
-                {property.purpose === 'aluguel' ? 'ALUGAR' : 'COMPRAR'}
+              <span className="rounded-card bg-brand-500 px-3 py-1 text-small font-semibold tracking-wide text-night-950">
+                {property.purpose === 'aluguel' ? 'Alugar' : 'Comprar'}
               </span>
-              <span className="rounded-md border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-[10px] font-semibold text-neutral-700 uppercase">
+              <span className="rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
                 {property.type}
               </span>
             </div>
           </div>
 
-          {/* Address */}
-          <p className="mt-2.5 flex items-center gap-1.5 text-sm text-neutral-500">
-            <MapPin className="h-4 w-4 shrink-0 text-brand-500" />
-            {property.address}
+          {/* Endereço */}
+          <p className="mt-2.5 flex items-center gap-1.5 text-body text-muted">
+            <MapPin className="h-4 w-4 shrink-0 text-brand-700" />
+            <span>{property.address || `${property.neighborhood}, ${property.city}`}</span>
           </p>
         </div>
       </section>
 
-      {/* Main Content Layout */}
+      {/* Grid Principal (Conteúdo + Lateral Sticky) */}
       <section className="py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="container-page">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
-            {/* Left Main Column */}
+            {/* Coluna Esquerda: Fotos, Especificações, Descrição, Vídeo, Características, Mapa */}
             <div className="space-y-8 min-w-0">
-              {/* Image Gallery Container */}
+              {/* Galeria de Fotos */}
               <div className="space-y-3">
-                <div className="group relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-neutral-900 shadow-md">
+                <div className="group relative aspect-[16/10] w-full overflow-hidden rounded-card bg-night-950 shadow-[var(--shadow-card)]">
                   {images.length > 0 ? (
                     <div
                       onClick={() => openLightbox(activeImage)}
@@ -164,16 +162,16 @@ export function PropertyDetails() {
                         alt={`${property.title} - foto ${activeImage + 1}`}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      {/* Hover Overlay Hint */}
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                        <span className="rounded-full bg-night-950/80 px-4 py-2 text-xs font-semibold text-white backdrop-blur-md flex items-center gap-2 shadow-lg">
+                      {/* Dica ao passar o mouse */}
+                      <div className="absolute inset-0 bg-night-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                        <span className="rounded-card bg-night-950/85 px-4 py-2 text-small font-medium text-white backdrop-blur-xs flex items-center gap-2">
                           <Camera className="h-4 w-4" />
-                          Clique para ampliar foto
+                          <span>Clique para ampliar foto</span>
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-neutral-500">
+                    <div className="flex h-full w-full items-center justify-center text-muted">
                       <Camera className="h-12 w-12" />
                     </div>
                   )}
@@ -182,23 +180,23 @@ export function PropertyDetails() {
                     <>
                       <button
                         type="button"
-                        aria-label="Imagem anterior"
+                        aria-label="Foto anterior"
                         onClick={(e) => {
                           e.stopPropagation()
                           setActiveImage((i) => (i - 1 + images.length) % images.length)
                         }}
-                        className="absolute left-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-night-950 shadow-md backdrop-blur transition-transform hover:scale-110 cursor-pointer"
+                        className="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-card bg-white/95 text-night-950 shadow-md transition-transform hover:scale-105"
                       >
                         <ChevronLeft className="h-5 w-5" />
                       </button>
                       <button
                         type="button"
-                        aria-label="Próxima imagem"
+                        aria-label="Próxima foto"
                         onClick={(e) => {
                           e.stopPropagation()
                           setActiveImage((i) => (i + 1) % images.length)
                         }}
-                        className="absolute right-4 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-night-950 shadow-md backdrop-blur transition-transform hover:scale-110 cursor-pointer"
+                        className="absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-card bg-white/95 text-night-950 shadow-md transition-transform hover:scale-105"
                       >
                         <ChevronRight className="h-5 w-5" />
                       </button>
@@ -209,15 +207,15 @@ export function PropertyDetails() {
                     <button
                       type="button"
                       onClick={() => openLightbox(activeImage)}
-                      className="absolute bottom-4 right-4 rounded-lg bg-night-950/70 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md hover:bg-night-950/90 transition-colors cursor-pointer flex items-center gap-1.5"
+                      className="absolute bottom-4 right-4 rounded-card bg-night-950/80 px-3 py-1.5 text-small font-medium text-white backdrop-blur-xs hover:bg-night-950 transition-colors flex items-center gap-2"
                     >
-                      <Camera className="h-3.5 w-3.5" />
-                      <span>{activeImage + 1} / {images.length} fotos</span>
+                      <Camera className="h-4 w-4" />
+                      <span>{activeImage + 1} de {images.length} fotos</span>
                     </button>
                   )}
                 </div>
 
-                {/* Thumbnails Row */}
+                {/* Tira de Miniaturas */}
                 {images.length > 1 && (
                   <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none">
                     {images.map((img, index) => (
@@ -225,10 +223,11 @@ export function PropertyDetails() {
                         key={img}
                         type="button"
                         onClick={() => setActiveImage(index)}
-                        className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-xl border-2 transition-all cursor-pointer ${
+                        aria-label={`Visualizar foto ${index + 1}`}
+                        className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-card transition-all ${
                           index === activeImage
-                            ? 'border-brand-500 ring-2 ring-brand-500/30'
-                            : 'border-transparent opacity-70 hover:opacity-100'
+                            ? 'ring-2 ring-brand-700 opacity-100'
+                            : 'opacity-65 hover:opacity-100'
                         }`}
                       >
                         <img
@@ -246,179 +245,206 @@ export function PropertyDetails() {
                 )}
               </div>
 
-              {/* Specs Bar */}
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+              {/* Barra de Especificações */}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 rounded-card bg-white p-5 shadow-[var(--shadow-card)]">
                 {stats.map(({ icon: Icon, value, label }) => (
-                  <div key={label} className="flex items-center gap-3 p-2">
-                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-neutral-100 text-night-950 shrink-0">
+                  <div key={label} className="flex items-center gap-3 p-1">
+                    <span className="grid h-11 w-11 place-items-center rounded-card bg-surface text-ink shrink-0">
                       <Icon className="h-5 w-5" />
                     </span>
                     <div>
-                      <p className="font-sans text-base font-bold leading-tight text-night-950">
+                      <p className="font-sans text-lead font-semibold leading-tight text-ink">
                         {value}
                       </p>
-                      <p className="text-xs text-neutral-500">{label}</p>
+                      <p className="text-small text-muted">{label}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Description Card */}
-              <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm space-y-4">
-                <h2 className="font-display text-2xl font-medium text-night-950">
+              {/* Descrição do Imóvel */}
+              <div className="rounded-card bg-white p-6 sm:p-8 shadow-[var(--shadow-card)] space-y-4">
+                <h2 className="font-display text-2xl font-light text-ink">
                   Sobre o imóvel
                 </h2>
-                <div className="space-y-4 text-[15px] leading-relaxed text-neutral-600 font-light">
+                <div className="space-y-4 text-body leading-relaxed text-ink font-light">
                   {property.description.map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                 </div>
-                <p className="flex items-start gap-2 text-xs text-neutral-400 pt-2 border-t border-neutral-100">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
-                  Os valores e informações anunciados podem sofrer alterações sem aviso prévio.
+                <p className="flex items-center gap-2 text-small text-muted pt-3 border-t border-brand-100">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-500 shrink-0" />
+                  Valores e disponibilidade sujeitos a confirmação junto ao proprietário.
                 </p>
               </div>
 
-              {/* Video Section */}
+              {/* Tour Virtual em Vídeo */}
               {property.videoUrl && (
-                <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm space-y-4 overflow-hidden">
-                  <h2 className="font-display text-2xl font-medium text-night-950">
-                    Tour Virtual (Vídeo)
+                <div className="rounded-card bg-white p-6 sm:p-8 shadow-[var(--shadow-card)] space-y-4 overflow-hidden">
+                  <h2 className="font-display text-2xl font-light text-ink">
+                    Apresentação em Vídeo
                   </h2>
                   <VideoSection
-                    title="Vídeo do Imóvel"
-                    subtitle="Assista ao vídeo exclusivo e conheça cada detalhe"
+                    title="Tour Exclusivo"
+                    subtitle="Conheça a arquitetura, iluminação e acabamentos"
                     videoUrl={property.videoUrl}
                   />
                 </div>
               )}
 
-              {/* Features List */}
-              <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm space-y-4">
-                <h2 className="font-display text-2xl font-medium text-night-950">
+              {/* Características Privativas */}
+              <div className="rounded-card bg-white p-6 sm:p-8 shadow-[var(--shadow-card)] space-y-4">
+                <h2 className="font-display text-2xl font-light text-ink">
                   Características do imóvel
                 </h2>
                 <ul className="grid grid-cols-1 gap-y-3 sm:grid-cols-2 md:grid-cols-3">
                   {property.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2.5 text-sm text-neutral-700 font-medium">
-                      <span className="grid h-5 w-5 place-items-center rounded-full bg-brand-50 text-brand-600 shrink-0">
+                    <li key={feature} className="flex items-center gap-2.5 text-body text-ink">
+                      <span className="grid h-5 w-5 place-items-center rounded-full bg-brand-100 text-brand-900 shrink-0">
                         <Check className="h-3.5 w-3.5" />
                       </span>
-                      {feature}
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Condo Features (if present) */}
+              {/* Infraestrutura do Condomínio (se houver) */}
               {property.condoFeatures && property.condoFeatures.length > 0 && (
-                <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm space-y-4">
-                  <h2 className="font-display text-2xl font-medium text-night-950">
+                <div className="rounded-card bg-white p-6 sm:p-8 shadow-[var(--shadow-card)] space-y-4">
+                  <h2 className="font-display text-2xl font-light text-ink">
                     Infraestrutura do condomínio
                   </h2>
                   <ul className="grid grid-cols-1 gap-y-3 sm:grid-cols-2 md:grid-cols-3">
                     {property.condoFeatures.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2.5 text-sm text-neutral-700 font-medium">
-                        <span className="grid h-5 w-5 place-items-center rounded-full bg-brand-50 text-brand-600 shrink-0">
+                      <li key={feature} className="flex items-center gap-2.5 text-body text-ink">
+                        <span className="grid h-5 w-5 place-items-center rounded-full bg-brand-100 text-brand-900 shrink-0">
                           <Check className="h-3.5 w-3.5" />
                         </span>
-                        {feature}
+                        <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {/* Location Card with Real Interactive Google Maps */}
-              <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm space-y-4">
+              {/* Localização & Mapa Interativo */}
+              <div className="rounded-card bg-white p-6 sm:p-8 shadow-[var(--shadow-card)] space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
-                    <h2 className="font-display text-2xl font-medium text-night-950">
-                      Localização & Mapa
+                    <h2 className="font-display text-2xl font-light text-ink">
+                      Localização
                     </h2>
-                    <p className="text-sm text-neutral-500 mt-1">{property.address}</p>
+                    <p className="text-body text-muted mt-1">{property.address || `${property.neighborhood}, ${property.city}`}</p>
                   </div>
                   <a
                     href={mapLinkUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-xl bg-neutral-100 px-4 py-2.5 text-xs font-semibold text-night-950 transition-colors hover:bg-neutral-200 cursor-pointer self-start sm:self-auto shrink-0"
+                    className={buttonClass({
+                      variant: 'outline',
+                      size: 'sm',
+                      className: 'self-start sm:self-auto shrink-0 font-medium',
+                    })}
                   >
-                    <MapPin className="h-4 w-4 text-brand-500" />
-                    Abrir no Google Maps
+                    <MapPin className="h-4 w-4 text-brand-700" />
+                    <span>Ver no Google Maps</span>
                   </a>
                 </div>
 
-                <div className="relative h-[340px] w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 shadow-inner">
-                  {property.address ? (
+                <div className="relative h-[340px] w-full overflow-hidden rounded-card bg-surface shadow-inner">
+                  {property.address || property.neighborhood ? (
                     <iframe
                       src={mapEmbedUrl}
-                      className="h-full w-full border-0 brightness-[1.02] contrast-[1.02]"
+                      className="h-full w-full border-0"
                       allowFullScreen
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                       title={`Mapa do imóvel - ${property.title}`}
                     />
                   ) : (
-                    <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-neutral-400">
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted">
                       <MapPin className="h-8 w-8 text-brand-500 opacity-40" />
-                      <p className="text-xs font-medium">Endereço não informado para carregar o mapa</p>
+                      <p className="text-small font-medium">Localização aproximada em Londrina</p>
                     </div>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Right Sticky Sidebar */}
+            {/* Coluna Direita: Painel Sticky de Contato e Proposta */}
             <aside className="lg:sticky lg:top-28 lg:self-start">
-              <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-lg space-y-6">
+              <div className="rounded-card bg-white p-6 sm:p-7 shadow-[var(--shadow-card)] space-y-6">
                 <div>
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brand-500">
+                  <span className="text-small font-medium text-brand-800">
                     Valor do imóvel
                   </span>
                   <p
-                    className={`mt-2 font-sans tracking-tight text-night-950 ${
+                    className={`mt-1 font-sans tracking-tight text-ink ${
                       !property.price || property.price <= 0
-                        ? 'text-2xl italic font-normal text-neutral-500'
-                        : 'text-3xl sm:text-4xl font-bold'
+                        ? 'text-lead italic text-muted'
+                        : 'text-head font-semibold'
                     }`}
                   >
                     {formatPrice(property)}
                   </p>
                   {property.condoFee && (
-                    <p className="mt-1 text-xs font-medium text-neutral-500">
+                    <p className="mt-1 text-small text-muted">
                       Condomínio: {formatPrice({ price: property.condoFee })}
                     </p>
                   )}
                 </div>
 
-                <div className="space-y-3 pt-2">
+                {/* Ações de Conversão */}
+                <div className="space-y-3 pt-1" data-tl-property={property.code}>
                   <a
                     href={whatsappHref}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3.5 text-xs font-semibold uppercase tracking-wider text-white shadow-sm transition-opacity hover:opacity-90 cursor-pointer"
+                    className={buttonClass({
+                      variant: 'whatsapp',
+                      size: 'lg',
+                      block: true,
+                      className: 'font-semibold',
+                    })}
                   >
-                    <MessageCircle className="h-4 w-4 fill-white" />
-                    Falar pelo WhatsApp
+                    <MessageCircle className="h-5 w-5 fill-white" />
+                    <span>Falar no WhatsApp</span>
                   </a>
                   <Link
                     to="/"
                     hash="contato"
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-night-950 py-3.5 text-xs font-semibold uppercase tracking-wider text-white shadow-sm transition-colors hover:bg-night-800 cursor-pointer"
+                    className={buttonClass({
+                      variant: 'primary',
+                      size: 'lg',
+                      block: true,
+                      className: 'font-semibold',
+                    })}
                   >
-                    <Calendar className="h-4 w-4" />
-                    Agendar visita
+                    <Calendar className="h-5 w-5" />
+                    <span>Agendar Visita</span>
                   </Link>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-neutral-100 pt-4 text-xs text-neutral-400">
-                  <span>Compartilhar:</span>
+                <div className="flex items-center justify-between border-t border-brand-100 pt-4 text-small text-muted">
+                  <span>Compartilhar imóvel:</span>
                   <div className="flex items-center gap-3">
-                    <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-night-950 cursor-pointer">
+                    <a
+                      href={SOCIAL_LINKS.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Compartilhar no Facebook"
+                      className="hover:text-ink transition-colors"
+                    >
                       <Facebook className="h-4 w-4" />
                     </a>
-                    <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-night-950 cursor-pointer">
+                    <a
+                      href={SOCIAL_LINKS.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram Armangni"
+                      className="hover:text-ink transition-colors"
+                    >
                       <Instagram className="h-4 w-4" />
                     </a>
                   </div>
@@ -429,78 +455,74 @@ export function PropertyDetails() {
         </div>
       </section>
 
-      {/* Recommended Carousel */}
+      {/* Carrossel de Imóveis Recomendados */}
       {recommended.length > 0 && (
-        <section className="bg-neutral-900 py-16">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section className="mt-16 bg-night-950 py-16 text-white">
+          <div className="container-page space-y-8">
             <SectionHeading
               dark
-              eyebrow="Para você"
-              title="Imóveis recomendados"
-              description="Outras opções semelhantes a este imóvel."
+              category="Oportunidades Semelhantes"
+              title="Imóveis Recomendados"
+              description="Outras opções selecionadas que correspondem ao perfil deste imóvel."
             />
-            <div className="mt-10">
-              <PropertyCarousel properties={recommended} />
-            </div>
+            <PropertyCarousel properties={recommended} tone="dark" label="Imóveis Recomendados" />
           </div>
         </section>
       )}
 
-
-
-      {/* Fullscreen Lightbox Modal */}
+      {/* Modal de Lightbox em Tela Cheia */}
       <AnimatePresence>
         {lightboxOpen && images.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[100] flex flex-col justify-between bg-night-950/95 p-4 sm:p-6 backdrop-blur-2xl"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] flex flex-col justify-between bg-night-950/95 p-4 sm:p-6 backdrop-blur-md"
           >
-            {/* Top Bar */}
+            {/* Barra Superior do Lightbox */}
             <div className="flex items-center justify-between z-10">
               <div className="flex items-center gap-3">
-                <span className="rounded-md bg-white/10 px-2.5 py-1 text-[10px] font-bold tracking-widest text-white uppercase">
-                  CÓD. {property.code}
+                <span className="rounded-card bg-white/10 px-3 py-1 text-small font-semibold tracking-wide text-white">
+                  Cód. {property.code}
                 </span>
-                <h3 className="hidden sm:block text-sm font-medium text-neutral-200 truncate max-w-md">
+                <h3 className="hidden sm:block text-body font-light text-neutral-200 truncate max-w-md">
                   {property.title}
                 </h3>
               </div>
 
               <div className="flex items-center gap-4">
-                <span className="text-xs font-medium text-neutral-400">
+                <span className="text-small font-medium text-neutral-300">
                   {lightboxIndex + 1} de {images.length}
                 </span>
                 <button
                   type="button"
-                  aria-label="Fechar galeria"
+                  aria-label="Fechar galeria de fotos"
                   onClick={() => setLightboxOpen(false)}
-                  className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 cursor-pointer"
+                  className="grid h-11 w-11 place-items-center rounded-card bg-white/10 text-white transition-colors hover:bg-white/20"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
             </div>
 
-            {/* Center Image Container */}
+            {/* Contêiner da Imagem Principal */}
             <div className="relative flex flex-1 items-center justify-center my-4 overflow-hidden">
               {images.length > 1 && (
                 <>
                   <button
                     type="button"
-                    aria-label="Imagem anterior"
+                    aria-label="Foto anterior"
                     onClick={prevLightbox}
-                    className="absolute left-2 sm:left-6 z-20 grid h-12 w-12 place-items-center rounded-full bg-white/15 text-white backdrop-blur transition-all hover:bg-white/30 hover:scale-110 cursor-pointer"
+                    className="absolute left-2 sm:left-6 z-20 grid h-12 w-12 place-items-center rounded-card bg-white/15 text-white backdrop-blur transition-all hover:bg-white/30 hover:scale-105"
                   >
                     <ChevronLeft className="h-6 w-6" />
                   </button>
                   <button
                     type="button"
-                    aria-label="Próxima imagem"
+                    aria-label="Próxima foto"
                     onClick={nextLightbox}
-                    className="absolute right-2 sm:right-6 z-20 grid h-12 w-12 place-items-center rounded-full bg-white/15 text-white backdrop-blur transition-all hover:bg-white/30 hover:scale-110 cursor-pointer"
+                    className="absolute right-2 sm:right-6 z-20 grid h-12 w-12 place-items-center rounded-card bg-white/15 text-white backdrop-blur transition-all hover:bg-white/30 hover:scale-105"
                   >
                     <ChevronRight className="h-6 w-6" />
                   </button>
@@ -509,17 +531,17 @@ export function PropertyDetails() {
 
               <motion.img
                 key={lightboxIndex}
-                initial={{ opacity: 0, scale: 0.96 }}
+                initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
                 src={images[lightboxIndex]}
-                alt={`${property.title} - imagem ${lightboxIndex + 1}`}
-                className="max-h-[78vh] w-auto max-w-full rounded-lg object-contain shadow-2xl select-none"
+                alt={`${property.title} - foto ${lightboxIndex + 1}`}
+                className="max-h-[78vh] w-auto max-w-full rounded-card object-contain shadow-2xl select-none"
               />
             </div>
 
-            {/* Bottom Thumbnails Strip */}
+            {/* Tira Inferior de Miniaturas */}
             {images.length > 1 && (
               <div className="flex justify-center gap-2 overflow-x-auto py-2 scrollbar-none z-10">
                 {images.map((img, idx) => (
@@ -527,10 +549,11 @@ export function PropertyDetails() {
                     key={img}
                     type="button"
                     onClick={() => setLightboxIndex(idx)}
-                    className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all cursor-pointer ${
+                    aria-label={`Ir para foto ${idx + 1}`}
+                    className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-card transition-all ${
                       idx === lightboxIndex
-                        ? 'border-brand-500 ring-2 ring-brand-500/40 opacity-100 scale-105'
-                        : 'border-transparent opacity-50 hover:opacity-100'
+                        ? 'ring-2 ring-brand-400 opacity-100 scale-105'
+                        : 'opacity-50 hover:opacity-100'
                     }`}
                   >
                     <img src={img} alt="" className="h-full w-full object-cover" />
@@ -541,6 +564,31 @@ export function PropertyDetails() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Barra Fixa Inferior de Conversão no Mobile */}
+      <div className="fixed bottom-0 inset-x-0 z-30 flex items-center justify-between gap-3 border-t border-night-950/10 bg-white/95 px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs font-medium text-brand-800">
+            {property.title} · {property.type}
+          </p>
+          <p className="truncate font-sans text-base font-bold tracking-tight text-ink sm:text-lg">
+            {formatPrice(property)}
+          </p>
+        </div>
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noreferrer"
+          className={buttonClass({
+            variant: 'whatsapp',
+            size: 'sm',
+            className: 'shrink-0 font-semibold px-4 shadow-sm',
+          })}
+        >
+          <MessageCircle className="h-4 w-4 fill-white" />
+          <span>WhatsApp</span>
+        </a>
+      </div>
     </div>
   )
 }

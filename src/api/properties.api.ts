@@ -156,6 +156,7 @@ function toProperty(
     videoUrl: item.videoUrl ?? undefined,
     features: extra.features ?? [],
     condoFeatures: extra.condoFeatures,
+    condominium: item.condominium?.name ?? undefined,
   }
 }
 

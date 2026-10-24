@@ -1,29 +1,30 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, DollarSign, FileText, Home } from '@/components/icons'
 import { ANUNCIAR_WHATSAPP_LINK } from '@/data/properties'
+import { SectionHeading } from '@/components/section-heading'
 
 const services = [
   {
     icon: FileText,
     title: 'Imóvel sob encomenda',
-    description: 'Descreva o imóvel que você procura e nós avisaremos quando encontrarmos.',
-    action: 'Encomende seu imóvel',
+    description: 'Descreva a localização, perfil e características do imóvel desejado. Mapeamos as melhores oportunidades em Londrina.',
+    action: 'Encomendar imóvel',
     href: '/#contato',
     external: false,
   },
   {
     icon: DollarSign,
-    title: 'Financiamento',
-    description: 'As melhores ofertas de crédito para você financiar seu imóvel.',
-    action: 'Faça uma simulação',
+    title: 'Simulação & Financiamento',
+    description: 'Assessoria completa na estruturação do crédito imobiliário com as melhores taxas das instituições financeiras parceiras.',
+    action: 'Simular financiamento',
     href: '/#contato',
     external: false,
   },
   {
     icon: Home,
-    title: 'Cadastre seu imóvel',
-    description: 'Anuncie conosco! Nós encontraremos o melhor negócio para você.',
-    action: 'Cadastre seu imóvel',
+    title: 'Avaliação & Anúncio',
+    description: 'Avaliação mercadológica criteriosa, produção audiovisual profissional e discrição na venda do seu patrimônio.',
+    action: 'Cadastrar imóvel',
     href: ANUNCIAR_WHATSAPP_LINK,
     external: true,
   },
@@ -31,60 +32,60 @@ const services = [
 
 export function ValuationSection() {
   return (
-    <section id="anunciar" className="bg-[#1C1C1C] py-20 text-white border-y border-white/5">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-3">
-          {services.map((item) => {
-            const Icon = item.icon
-            return (
-              <div
-                key={item.title}
-                className="flex flex-col justify-between space-y-6 rounded-2xl bg-[#262626] p-8 border border-white/5 shadow-lg transition-transform duration-300 hover:-translate-y-1"
-              >
-                <div className="space-y-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#1C1C1C] text-[#BFB4AA]">
-                    <Icon className="h-7 w-7 stroke-[1.8]" />
-                  </div>
-                  <h3 className="font-display text-2xl font-medium tracking-wide text-[#BFB4AA] sm:text-3xl">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm font-light leading-relaxed text-neutral-300 sm:text-base">
-                    {item.description}
-                  </p>
-                </div>
+    <section id="anunciar" className="bg-night-950 py-24 text-white">
+      <div className="container-page space-y-14">
+        <SectionHeading
+          dark
+          title="Assessoria para o seu patrimônio"
+          description="Acompanhamento personalizado em todas as etapas de compra, venda e estruturação patrimonial em Londrina."
+        />
 
-                <div className="pt-2">
-                  {item.external ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-3 text-sm font-medium tracking-wide text-[#BFB4AA] transition-colors hover:text-white cursor-pointer"
-                    >
-                      <span className="border-b border-[#BFB4AA]/40 pb-0.5 transition-colors group-hover:border-white">
-                        {item.action}
-                      </span>
-                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </a>
-                  ) : (
-                    <Link
-                      to={item.href}
-                      onClick={() => {
-                        const el = document.getElementById('contato')
-                        if (el) el.scrollIntoView({ behavior: 'smooth' })
-                      }}
-                      className="group inline-flex items-center gap-3 text-sm font-medium tracking-wide text-[#BFB4AA] transition-colors hover:text-white cursor-pointer"
-                    >
-                      <span className="border-b border-[#BFB4AA]/40 pb-0.5 transition-colors group-hover:border-white">
-                        {item.action}
-                      </span>
-                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </Link>
-                  )}
-                </div>
+        <div className="grid gap-10 md:grid-cols-3">
+          {services.map((item) => (
+            <div
+              key={item.title}
+              className="flex flex-col justify-between space-y-6"
+            >
+              <div className="space-y-3">
+                <h3 className="font-display text-lead font-light text-white">
+                  {item.title}
+                </h3>
+                <p className="text-body font-light leading-relaxed text-neutral-300">
+                  {item.description}
+                </p>
               </div>
-            )
-          })}
+
+              <div>
+                {item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 text-small font-medium text-brand-300 transition-colors hover:text-white"
+                  >
+                    <span className="border-b border-brand-300/40 pb-0.5 group-hover:border-white">
+                      {item.action}
+                    </span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </a>
+                ) : (
+                  <Link
+                    to={item.href}
+                    onClick={() => {
+                      const el = document.getElementById('contato')
+                      if (el) el.scrollIntoView({ behavior: 'smooth' })
+                    }}
+                    className="group inline-flex items-center gap-2 text-small font-medium text-brand-300 transition-colors hover:text-white"
+                  >
+                    <span className="border-b border-brand-300/40 pb-0.5 group-hover:border-white">
+                      {item.action}
+                    </span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

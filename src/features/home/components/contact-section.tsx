@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Phone, MapPin, Clock, Send, Check, Sparkles } from '@/components/icons'
+import { Send, Check } from '@/components/icons'
 import { EMAIL, PHONE, WHATSAPP, ADDRESS } from '@/data/properties'
 import { SectionHeading } from '@/components/section-heading'
+import { submitContact } from '@/lib/tracking'
+import { buttonClass } from '@/components/ui/button'
 
 const contactChannels = [
   { id: 'whatsapp', label: 'WhatsApp' },
@@ -19,9 +21,11 @@ export function ContactSection() {
     message: '',
   })
 
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error' | 'failed'
+  >('idle')
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!formData.name || !formData.email || !formData.message) {
       setStatus('error')
@@ -29,188 +33,136 @@ export function ContactSection() {
     }
 
     setStatus('loading')
+    const sent = await submitContact(formData)
+    if (!sent) {
+      setStatus('failed')
+      return
+    }
 
-    // Simulate API request
-    setTimeout(() => {
-      setStatus('success')
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        preference: 'whatsapp',
-        message: '',
-      })
-    }, 1200)
+    setStatus('success')
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      preference: 'whatsapp',
+      message: '',
+    })
   }
 
   return (
-    <section id="contato" className="relative bg-[#1C1C1C] py-24 scroll-mt-20 text-white overflow-hidden">
-      {/* Background Subtle Scrims */}
-      <div
-        className="pointer-events-none absolute -left-32 top-1/4 h-[500px] w-[500px] rounded-full opacity-10 blur-3xl"
-        style={{
-          background: 'radial-gradient(circle, rgba(191,180,170,0.4) 0%, transparent 70%)',
-        }}
-      />
-      <div
-        className="pointer-events-none absolute -right-32 bottom-1/4 h-[500px] w-[500px] rounded-full opacity-10 blur-3xl"
-        style={{
-          background: 'radial-gradient(circle, rgba(191,180,170,0.4) 0%, transparent 70%)',
-        }}
-      />
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="contato" className="relative bg-night-950 py-24 scroll-mt-20 text-white">
+      <div className="container-page space-y-16">
         <SectionHeading
           dark
-          eyebrow="Fale Conosco"
-          title="Estamos prontos para ajudá-lo a realizar o seu sonho"
-          description="Nossa equipe especializada está pronta para esclarecer todas as suas dúvidas e agendar uma visita personalizada ao imóvel."
+          title="Fale com a nossa equipe especializada"
+          description="Atendimento com discrição e assessoria completa para esclarecer dúvidas, agendar visitas ou anunciar seu imóvel em Londrina."
         />
 
-        <div className="mt-16 grid gap-12 lg:grid-cols-12 lg:gap-8">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Informações de contato */}
           <div className="flex flex-col justify-between space-y-8 lg:col-span-5">
-            <div className="space-y-6">
-              <h3 className="font-display text-2xl font-medium tracking-wide text-[#BFB4AA]">
-                Canais de Atendimento
-              </h3>
-              <p className="text-[15px] font-light leading-relaxed text-neutral-300">
-                Seja para adquirir uma residência de alto padrão ou anunciar seu imóvel em Londrina, garantimos discrição e assessoria completa.
-              </p>
+            <div className="space-y-8">
+              {/* Telefone / WhatsApp */}
+              <a
+                href={`https://wa.me/${WHATSAPP}`}
+                target="_blank"
+                rel="noreferrer"
+                className="group block space-y-1"
+              >
+                <p className="text-small font-medium text-brand-300">
+                  Telefone / WhatsApp
+                </p>
+                <p className="font-display text-lead font-light text-white transition-colors group-hover:text-brand-300">
+                  {PHONE}
+                </p>
+              </a>
 
-              <div className="space-y-4 pt-2">
-                {/* Telefone / WhatsApp */}
-                <a
-                  href={`https://wa.me/${WHATSAPP}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex items-start gap-4 rounded-xl border border-white/5 bg-[#262626] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#BFB4AA]/30 hover:shadow-xl"
-                >
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#1C1C1C] text-[#BFB4AA] transition-colors group-hover:bg-[#BFB4AA] group-hover:text-[#1C1C1C]">
-                    <Phone className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <h4 className="text-[10px] font-semibold uppercase tracking-widest text-[#BFB4AA]/70">
-                      Telefone / WhatsApp
-                    </h4>
-                    <p className="mt-1 font-medium text-white transition-colors group-hover:text-[#BFB4AA]">
-                      {PHONE}
-                    </p>
-                  </div>
-                </a>
+              {/* Email */}
+              <a
+                href={`mailto:${EMAIL}`}
+                className="group block space-y-1"
+              >
+                <p className="text-small font-medium text-brand-300">
+                  E-mail de Atendimento
+                </p>
+                <p className="font-display text-lead font-light text-white transition-colors group-hover:text-brand-300">
+                  {EMAIL}
+                </p>
+              </a>
 
-                {/* Email */}
-                <a
-                  href={`mailto:${EMAIL}`}
-                  className="group flex items-start gap-4 rounded-xl border border-white/5 bg-[#262626] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#BFB4AA]/30 hover:shadow-xl"
-                >
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#1C1C1C] text-[#BFB4AA] transition-colors group-hover:bg-[#BFB4AA] group-hover:text-[#1C1C1C]">
-                    <Mail className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <h4 className="text-[10px] font-semibold uppercase tracking-widest text-[#BFB4AA]/70">
-                      E-mail
-                    </h4>
-                    <p className="mt-1 font-medium text-white transition-colors group-hover:text-[#BFB4AA]">
-                      {EMAIL}
-                    </p>
-                  </div>
-                </a>
+              {/* Endereço */}
+              <div className="space-y-1">
+                <p className="text-small font-medium text-brand-300">
+                  Endereço
+                </p>
+                <p className="text-body font-light leading-relaxed text-neutral-200">
+                  {ADDRESS}
+                </p>
+              </div>
 
-                {/* Endereço */}
-                <div className="flex items-start gap-4 rounded-xl border border-white/5 bg-[#262626] p-4">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#1C1C1C] text-[#BFB4AA]">
-                    <MapPin className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <h4 className="text-[10px] font-semibold uppercase tracking-widest text-[#BFB4AA]/70">
-                      Endereço
-                    </h4>
-                    <p className="mt-1 text-sm font-medium leading-relaxed text-white">
-                      {ADDRESS}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Horário */}
-                <div className="flex items-start gap-4 rounded-xl border border-white/5 bg-[#262626] p-4">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#1C1C1C] text-[#BFB4AA]">
-                    <Clock className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <h4 className="text-[10px] font-semibold uppercase tracking-widest text-[#BFB4AA]/70">
-                      Horário de Atendimento
-                    </h4>
-                    <p className="mt-1 text-sm font-medium text-white">
-                      Segunda a Sexta: 8h às 18h
-                    </p>
-                    <p className="mt-0.5 text-xs text-neutral-300">
-                      Sábado: 8h às 12h
-                    </p>
-                    <p className="mt-0.5 text-xs text-[#BFB4AA]">
-                      Domingo: Plantão (WhatsApp)
-                    </p>
-                  </div>
-                </div>
+              {/* Horário */}
+              <div className="space-y-1">
+                <p className="text-small font-medium text-brand-300">
+                  Horário de Funcionamento
+                </p>
+                <p className="text-body font-light text-neutral-200">
+                  Segunda a Sexta: 8h às 18h · Sábado: 8h às 12h
+                </p>
+                <p className="text-small text-brand-400">
+                  Plantão de atendimento via WhatsApp aos domingos
+                </p>
               </div>
             </div>
           </div>
 
           {/* Formulário com Taste UI */}
           <div className="lg:col-span-7">
-            <div className="h-full rounded-2xl border border-white/10 bg-[#262626] p-8 shadow-2xl backdrop-blur-xl lg:p-10">
+            <div className="h-full rounded-card border border-white/10 bg-night-800 p-6 sm:p-10">
               <AnimatePresence mode="wait">
                 {status === 'success' ? (
                   <motion.div
                     key="success"
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="flex h-full flex-col items-center justify-center py-16 text-center"
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    className="flex h-full flex-col items-center justify-center py-12 text-center"
                   >
-                    <div className="mb-6 grid h-16 w-16 place-items-center rounded-full bg-[#BFB4AA]/20 text-[#BFB4AA]">
-                      <Check className="h-8 w-8 stroke-[2.5]" />
+                    <div className="mb-5 grid h-14 w-14 place-items-center rounded-full bg-brand-500/20 text-brand-300">
+                      <Check className="h-7 w-7" />
                     </div>
-                    <h3 className="font-display text-2xl font-medium text-[#BFB4AA]">
-                      Solicitação Recebida com Sucesso
+                    <h3 className="font-display text-2xl font-light text-white">
+                      Mensagem enviada com sucesso
                     </h3>
-                    <p className="mt-3 max-w-sm text-sm font-light leading-relaxed text-neutral-300">
-                      Um de nossos especialistas em imóveis de alto padrão entrará em contato em breve através do seu canal preferido.
+                    <p className="mt-3 max-w-sm text-body font-light leading-relaxed text-neutral-300">
+                      Nossos corretores especialistas entrarão em contato em breve através do canal informado.
                     </p>
                     <button
                       type="button"
                       onClick={() => setStatus('idle')}
-                      className="mt-8 rounded-full border border-[#BFB4AA] bg-transparent px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#BFB4AA] transition-all hover:bg-[#BFB4AA] hover:text-[#1C1C1C] active:scale-[0.98]"
+                      className={buttonClass({
+                        variant: 'accent',
+                        size: 'md',
+                        className: 'mt-7 font-semibold',
+                      })}
                     >
                       Enviar outra mensagem
                     </button>
                   </motion.div>
                 ) : (
-                  <motion.form
-                    key="form"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    onSubmit={handleSubmit}
-                    className="space-y-6"
-                  >
-                    <div className="border-b border-white/10 pb-6">
-                      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#BFB4AA]">
-                        <Sparkles className="h-4 w-4" />
-                        Formulário de Contato
-                      </div>
-                      <h3 className="mt-2 font-display text-2xl font-medium text-white sm:text-3xl">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                      <h3 className="font-display text-2xl font-light text-white sm:text-3xl">
                         Envie uma mensagem
                       </h3>
-                      <p className="mt-1 text-xs font-light text-neutral-400 sm:text-sm">
-                        Preencha suas informações para receber uma apresentação completa dos nossos imóveis.
+                      <p className="mt-1.5 text-small text-neutral-300">
+                        Preencha o formulário para receber o catálogo completo ou agendar uma visita.
                       </p>
                     </div>
 
-                    <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="grid gap-5 sm:grid-cols-2">
                       {/* Nome */}
-                      <div className="space-y-2">
-                        <label htmlFor="name" className="block text-[11px] font-medium uppercase tracking-wider text-[#BFB4AA]">
+                      <div className="space-y-1.5">
+                        <label htmlFor="name" className="block text-small font-medium text-neutral-300">
                           Nome Completo *
                         </label>
                         <input
@@ -219,14 +171,14 @@ export function ContactSection() {
                           required
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          className="w-full rounded-xl border border-white/10 bg-[#1C1C1C] px-4 py-3.5 text-sm text-white placeholder-neutral-500 shadow-inner transition-all duration-300 focus:border-[#BFB4AA] focus:bg-[#1C1C1C] focus:outline-none focus:ring-1 focus:ring-[#BFB4AA]"
-                          placeholder="Seu nome completo"
+                          className="w-full rounded-card border border-white/15 bg-night-950 px-4 py-3 text-body text-white placeholder-neutral-500 transition-colors focus:border-brand-400 focus:outline-none"
+                          placeholder="Seu nome"
                         />
                       </div>
 
                       {/* Telefone */}
-                      <div className="space-y-2">
-                        <label htmlFor="phone" className="block text-[11px] font-medium uppercase tracking-wider text-[#BFB4AA]">
+                      <div className="space-y-1.5">
+                        <label htmlFor="phone" className="block text-small font-medium text-neutral-300">
                           Telefone / WhatsApp
                         </label>
                         <input
@@ -234,15 +186,15 @@ export function ContactSection() {
                           id="phone"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="w-full rounded-xl border border-white/10 bg-[#1C1C1C] px-4 py-3.5 text-sm text-white placeholder-neutral-500 shadow-inner transition-all duration-300 focus:border-[#BFB4AA] focus:bg-[#1C1C1C] focus:outline-none focus:ring-1 focus:ring-[#BFB4AA]"
+                          className="w-full rounded-card border border-white/15 bg-night-950 px-4 py-3 text-body text-white placeholder-neutral-500 transition-colors focus:border-brand-400 focus:outline-none"
                           placeholder="(43) 99999-0000"
                         />
                       </div>
                     </div>
 
                     {/* Email */}
-                    <div className="space-y-2">
-                      <label htmlFor="email" className="block text-[11px] font-medium uppercase tracking-wider text-[#BFB4AA]">
+                    <div className="space-y-1.5">
+                      <label htmlFor="email" className="block text-small font-medium text-neutral-300">
                         E-mail de Contato *
                       </label>
                       <input
@@ -251,17 +203,17 @@ export function ContactSection() {
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full rounded-xl border border-white/10 bg-[#1C1C1C] px-4 py-3.5 text-sm text-white placeholder-neutral-500 shadow-inner transition-all duration-300 focus:border-[#BFB4AA] focus:bg-[#1C1C1C] focus:outline-none focus:ring-1 focus:ring-[#BFB4AA]"
+                        className="w-full rounded-card border border-white/15 bg-night-950 px-4 py-3 text-body text-white placeholder-neutral-500 transition-colors focus:border-brand-400 focus:outline-none"
                         placeholder="seu.email@exemplo.com"
                       />
                     </div>
 
                     {/* Canal de Preferência */}
                     <div className="space-y-2">
-                      <label className="block text-[11px] font-medium uppercase tracking-wider text-[#BFB4AA]">
-                        Canal de preferência para retorno
-                      </label>
-                      <div className="grid grid-cols-3 gap-2.5 rounded-xl border border-white/10 bg-[#1C1C1C] p-1.5">
+                      <span className="block text-small font-medium text-neutral-300">
+                        Canal preferido para retorno
+                      </span>
+                      <div className="grid grid-cols-3 gap-2">
                         {contactChannels.map((item) => {
                           const isActive = formData.preference === item.id
                           return (
@@ -269,18 +221,13 @@ export function ContactSection() {
                               key={item.id}
                               type="button"
                               onClick={() => setFormData({ ...formData, preference: item.id })}
-                              className={`relative py-2.5 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-300 ${
-                                isActive ? 'text-[#1C1C1C]' : 'text-neutral-400 hover:text-white'
+                              className={`rounded-card py-2.5 text-small font-medium transition-colors ${
+                                isActive
+                                  ? 'bg-brand-500 text-night-950 font-semibold'
+                                  : 'bg-night-950 text-neutral-300 hover:text-white'
                               }`}
                             >
-                              {isActive && (
-                                <motion.span
-                                  layoutId="activePreference"
-                                  className="absolute inset-0 rounded-lg bg-[#BFB4AA]"
-                                  transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                                />
-                              )}
-                              <span className="relative z-10">{item.label}</span>
+                              {item.label}
                             </button>
                           )
                         })}
@@ -288,8 +235,8 @@ export function ContactSection() {
                     </div>
 
                     {/* Mensagem */}
-                    <div className="space-y-2">
-                      <label htmlFor="message" className="block text-[11px] font-medium uppercase tracking-wider text-[#BFB4AA]">
+                    <div className="space-y-1.5">
+                      <label htmlFor="message" className="block text-small font-medium text-neutral-300">
                         Mensagem ou Especificações do Imóvel *
                       </label>
                       <textarea
@@ -298,35 +245,42 @@ export function ContactSection() {
                         rows={4}
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full rounded-xl border border-white/10 bg-[#1C1C1C] px-4 py-3.5 text-sm text-white placeholder-neutral-500 shadow-inner transition-all duration-300 focus:border-[#BFB4AA] focus:bg-[#1C1C1C] focus:outline-none focus:ring-1 focus:ring-[#BFB4AA] resize-none"
-                        placeholder="Descreva o imóvel que procura, bairro de preferência ou detalhes para anúncio..."
+                        className="w-full rounded-card border border-white/15 bg-night-950 px-4 py-3 text-body text-white placeholder-neutral-500 transition-colors focus:border-brand-400 focus:outline-none resize-none"
+                        placeholder="Descreva o perfil do imóvel procurado, bairro de interesse ou dúvidas..."
                       />
                     </div>
 
                     {status === 'error' && (
-                      <p className="text-xs text-red-400 font-medium">
+                      <p className="text-small text-red-400 font-medium">
                         Por favor, preencha todos os campos obrigatórios (*).
+                      </p>
+                    )}
+                    {status === 'failed' && (
+                      <p role="alert" className="text-small text-red-400 font-medium">
+                        Não conseguimos enviar agora. Tente novamente ou entre em contato direto pelo WhatsApp.
                       </p>
                     )}
 
                     <button
                       type="submit"
                       disabled={status === 'loading'}
-                      className="group relative flex w-full items-center justify-center gap-3 rounded-xl bg-[#BFB4AA] py-4 text-[12px] font-semibold uppercase tracking-[0.24em] text-[#1C1C1C] transition-all hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                      className={buttonClass({
+                        variant: 'accent',
+                        size: 'lg',
+                        block: true,
+                        className: 'font-semibold',
+                      })}
                     >
                       {status === 'loading' ? (
-                        <span className="flex items-center gap-2">
-                          <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#1C1C1C] border-t-transparent" />
-                          Enviando solicitação...
-                        </span>
+                        'Enviando mensagem...'
                       ) : (
                         <>
-                          Enviar Solicitação
-                          <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5" />
+                          <span>Enviar Solicitação</span>
+                          <Send className="h-4 w-4" />
                         </>
                       )}
                     </button>
-                  </motion.form>
+                  </form>
                 )}
               </AnimatePresence>
             </div>

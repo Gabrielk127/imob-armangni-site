@@ -356,11 +356,11 @@ export function ListingsFilterModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between border-t border-neutral-100 bg-neutral-50/80 px-6 py-4">
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-neutral-100 bg-neutral-50/80 px-4 py-4 sm:px-6">
           <button
             type="button"
             onClick={handleClear}
-            className="text-xs font-medium uppercase tracking-wider text-neutral-500 hover:text-night-950 transition-colors"
+            className="text-center py-2 text-small font-medium text-neutral-500 hover:text-night-950 transition-colors"
           >
             Limpar Filtros
           </button>
@@ -368,17 +368,17 @@ export function ListingsFilterModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-neutral-200 bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-neutral-700 hover:bg-neutral-100 transition-colors"
+              className="flex-1 sm:flex-none rounded-card border border-neutral-200 bg-white px-5 py-2.5 text-small font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="button"
               onClick={handleApply}
-              className="flex items-center gap-2 rounded-lg bg-brand-500 px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-night-950 hover:bg-brand-400 transition-colors shadow-sm"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-card bg-brand-500 px-6 py-2.5 text-small font-semibold text-night-950 hover:bg-brand-400 transition-colors shadow-sm"
             >
               <Check className="h-4 w-4" />
-              Aplicar Filtros {activeCount > 0 && `(${activeCount})`}
+              <span>Aplicar {activeCount > 0 && `(${activeCount})`}</span>
             </button>
           </div>
         </div>

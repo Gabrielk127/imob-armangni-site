@@ -11,9 +11,9 @@ export function Testimonials() {
   const testimonial = testimonials[active]
 
   return (
-    <section className="bg-white py-24">
-      <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-        <SectionHeading eyebrow="Depoimentos" title="O que nossos clientes dizem" />
+    <section className="bg-paper py-24">
+      <div className="container-page max-w-3xl text-center">
+        <SectionHeading category="Depoimentos" title="O que nossos clientes dizem" align="center" />
 
         <div className="relative mt-14">
           <span className="absolute -top-7 left-1/2 grid h-14 w-14 -translate-x-1/2 place-items-center rounded-full bg-night-950 text-brand-400">
@@ -22,16 +22,16 @@ export function Testimonials() {
 
           <figure
             key={active}
-            className="bg-neutral-50 px-8 pb-10 pt-16 ring-1 ring-neutral-200/70 sm:px-14"
+            className="rounded-2xl border border-brand-200/60 bg-white p-8 pt-16 shadow-card sm:p-14"
           >
-            <blockquote className="text-[15px] font-light leading-relaxed text-neutral-600">
+            <blockquote className="text-body font-light leading-relaxed text-ink">
               “{testimonial.quote}”
             </blockquote>
             <figcaption className="mt-8">
-              <p className="font-display text-xl font-medium text-night-950">
+              <p className="font-display text-lead font-light text-night-950">
                 {testimonial.author}
               </p>
-              <p className="mt-1 text-[11px] uppercase tracking-[0.3em] text-neutral-400">
+              <p className="mt-1 text-small text-muted">
                 {testimonial.role}
               </p>
             </figcaption>

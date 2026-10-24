@@ -1,76 +1,112 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Building2, Home, Sparkles, BedDouble } from '@/components/icons'
+import { ArrowRight } from '@/components/icons'
 import { SectionHeading } from '@/components/section-heading'
+import { IMAGES } from '@/data/properties'
 
 const propertyTypesData = [
   {
     name: 'Apartamentos',
     type: 'Apartamento',
-    icon: Building2,
-    description: 'Residências urbanas de alto padrão',
+    image: IMAGES.apartment,
+    description: 'Residências urbanas de alto padrão com plantas inteligentes e localização nobre.',
   },
   {
     name: 'Coberturas',
     type: 'Cobertura',
-    icon: Sparkles,
-    description: 'Penthouses e vistas panorâmicas exclusivas',
+    image: IMAGES.terrace,
+    description: 'Penthouses exclusivas e vistas panorâmicas nos pontos mais altos da cidade.',
   },
   {
     name: 'Casas em Condomínio',
     type: 'Casa em Condomínio',
-    icon: Home,
-    description: 'Segurança, privacidade e lazer completo',
+    image: IMAGES.condoHouse,
+    description: 'Segurança perimetral, amplos terrenos, lazer privativo e contato com a natureza.',
   },
   {
     name: 'Sobrados',
     type: 'Sobrado',
-    icon: BedDouble,
-    description: 'Espaço, sofisticação e conforto familiar',
+    image: IMAGES.sobrado,
+    description: 'Arquitetura imponente, sofisticação espacial e conforto para toda a família.',
   },
 ]
 
 export function NeighborhoodsSection() {
   return (
-    <section className="bg-[#1C1C1C] py-24 text-white border-b border-white/5">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="bg-night-950 py-24 text-white">
+      {/* Signature Marquee Band (Taste Skill Direction) */}
+      <div className="relative mb-20 overflow-hidden py-5" aria-hidden>
+        <div className="flex w-max animate-[marquee_36s_linear_infinite] hover:[animation-play-state:paused]">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex shrink-0 items-center gap-8 px-4">
+              <span className="font-display text-xl sm:text-2xl font-light text-neutral-300">
+                Armangni Negócios Imobiliários
+              </span>
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
+              <span className="text-body font-light text-brand-300">
+                Gleba Palhano e Região
+              </span>
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
+              <span className="font-display text-xl sm:text-2xl font-light text-neutral-300">
+                Alto Padrão em Londrina
+              </span>
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
+              <span className="text-body font-light text-brand-300">
+                Creci 8328-J
+              </span>
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="container-page space-y-14">
         <SectionHeading
           dark
-          eyebrow="Portfólio"
           title="Tipos de Imóveis"
-          description="Residências escolhidas a dedo para quem procura mais do que um endereço."
+          description="Residências selecionadas para quem busca mais do que um endereço: uma experiência de vida."
         />
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {propertyTypesData.map((item) => {
-            const Icon = item.icon
-            return (
-              <Link
-                key={item.name}
-                to="/imoveis"
-                search={{ tipo: item.type }}
-                className="group relative flex flex-col justify-between h-60 rounded-2xl border border-white/10 bg-[#262626] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#BFB4AA]/40 hover:shadow-2xl"
-              >
-                <div>
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#1C1C1C] text-[#BFB4AA] transition-colors group-hover:bg-[#BFB4AA] group-hover:text-[#1C1C1C]">
-                    <Icon className="h-6 w-6 stroke-[1.8]" />
-                  </div>
-                  <h3 className="mt-5 font-display text-2xl font-medium tracking-wide text-[#BFB4AA] group-hover:text-white transition-colors">
-                    {item.name}
-                  </h3>
-                  <p className="mt-1.5 text-xs text-neutral-400 font-light">
-                    {item.description}
-                  </p>
-                </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {propertyTypesData.map((item) => (
+            <Link
+              key={item.name}
+              to="/imoveis"
+              search={{ tipo: item.type }}
+              className="group relative flex h-80 flex-col justify-end overflow-hidden rounded-card p-6 transition-[transform,box-shadow] duration-300 ease-[var(--ease-out)] hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]"
+            >
+              {/* Imagem de Fundo de Arquitetura */}
+              <img
+                src={item.image}
+                alt={item.name}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-out)] group-hover:scale-105"
+              />
 
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#BFB4AA] group-hover:text-white transition-colors">
-                    Ver imóveis
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-                  </span>
+              {/* Scrim neutro permanente para leitura nítida */}
+              <div
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(to top, rgba(10, 10, 11, 0.95) 0%, rgba(10, 10, 11, 0.5) 50%, rgba(10, 10, 11, 0.2) 100%)',
+                }}
+              />
+
+              <div className="relative z-10 space-y-2">
+                <h3 className="font-display text-2xl font-normal tracking-tight text-white group-hover:text-brand-300 transition-colors">
+                  {item.name}
+                </h3>
+                <p className="text-small font-light leading-relaxed text-neutral-300 line-clamp-2">
+                  {item.description}
+                </p>
+                <div className="pt-2 flex items-center gap-2 text-small font-medium text-brand-300 group-hover:text-white transition-colors">
+                  <span>Explorar carteira</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
-              </Link>
-            )
-          })}
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

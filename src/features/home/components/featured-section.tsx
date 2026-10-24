@@ -1,145 +1,243 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from '@/components/icons'
 import { usePropertiesList } from '@/hooks/use-properties-list'
+import { usePropertyTypes } from '@/hooks/use-property-facets'
 import { PropertyCarousel } from '@/components/property-carousel'
 import { SectionHeading } from '@/components/section-heading'
+import { Skeleton } from '@/components/ui/skeleton'
+import { buttonClass } from '@/components/ui/button'
+import { properties as mockProperties } from '@/data/properties'
+
+function CarouselSkeleton() {
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="space-y-3">
+          <Skeleton className="aspect-[4/3] w-full rounded-card" />
+          <Skeleton className="h-6 w-1/3" />
+          <Skeleton className="h-7 w-3/4" />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export function FeaturedSection() {
-  // 1. Carrossel: Imóveis exclusivamente de Londrina
-  const { data: londrinaData } = usePropertiesList({
-    city: 'Londrina',
-    limit: 12,
-    sortBy: 'relevance',
-  })
-  const londrinaProperties = (londrinaData?.data ?? []).filter(
-    (p) => !p.city || p.city.toLowerCase().includes('londrina')
-  )
+  const { data: propertyTypes = [] } = usePropertyTypes()
+  const casaTypeId = propertyTypes.find((t) => t.name.toLowerCase() === 'casa')?.id
+  const apTypeId = propertyTypes.find((t) => t.name.toLowerCase() === 'apartamento')?.id
+  const sobradoTypeId = propertyTypes.find((t) => t.name.toLowerCase() === 'sobrado')?.id
 
-  // 2. Carrossel: Apartamentos
-  const { data: apartmentsData } = usePropertiesList({
-    search: 'Apartamento',
+  // 1. Carrossel: Destaques (o primeiro carrossel)
+  const { data: featuredData, isPending: isFeaturedPending } = usePropertiesList({
+    isFeatured: true,
     limit: 12,
     sortBy: 'relevance',
   })
-  const apartmentProperties = (apartmentsData?.data ?? []).filter(
-    (p) =>
-      p.type?.toLowerCase().includes('apartamento') ||
-      p.title?.toLowerCase().includes('apartamento')
-  )
+  const featuredProperties =
+    featuredData?.data && featuredData.data.length > 0
+      ? featuredData.data
+      : mockProperties.filter((p) => p.featured)
 
-  // 3. Carrossel: Casas em Condomínio / Sobrados
-  const { data: housesData } = usePropertiesList({
-    search: 'Casa',
-    limit: 12,
+  // 2. Carrossel: Casas em condomínio
+  const { data: housesData, isPending: isHousesPending } = usePropertiesList({
+    typeId: casaTypeId,
+    limit: 25,
     sortBy: 'relevance',
   })
-  const houseProperties = (housesData?.data ?? []).filter(
-    (p) =>
-      p.type?.toLowerCase().includes('casa') ||
-      p.type?.toLowerCase().includes('sobrado') ||
-      p.title?.toLowerCase().includes('casa') ||
-      p.title?.toLowerCase().includes('sobrado')
-  )
+  const condoHouseProperties = (() => {
+    const list =
+      housesData?.data && housesData.data.length > 0
+        ? housesData.data
+        : mockProperties.filter(
+            (p) =>
+              p.type === 'Casa em Condomínio' ||
+              p.title?.toLowerCase().includes('casa')
+          )
+
+    // Prioriza casas que possuem condomínio cadastrado ou menção a condomínio
+    const withCondo = list.filter(
+      (p) =>
+        Boolean(p.condominium) ||
+        p.subtitle?.toLowerCase().includes('condomínio') ||
+        p.subtitle?.toLowerCase().includes('condominio') ||
+        p.title?.toLowerCase().includes('condomínio') ||
+        p.title?.toLowerCase().includes('condominio')
+    )
+    const withoutCondo = list.filter((p) => !withCondo.includes(p))
+
+    return [...withCondo, ...withoutCondo]
+  })()
+
+  // 3. Carrossel: Apartamentos e Coberturas
+  const { data: apartmentsData, isPending: isApartmentsPending } = usePropertiesList({
+    typeId: apTypeId,
+    limit: 16,
+    sortBy: 'relevance',
+  })
+  const apartmentProperties =
+    apartmentsData?.data && apartmentsData.data.length > 0
+      ? apartmentsData.data
+      : mockProperties.filter(
+          (p) => p.type === 'Apartamento' || p.type === 'Cobertura'
+        )
+
+  // 4. Carrossel: Sobrados
+  const { data: sobradosData, isPending: isSobradosPending } = usePropertiesList({
+    typeId: sobradoTypeId,
+    limit: 16,
+    sortBy: 'relevance',
+  })
+  const sobradoProperties =
+    sobradosData?.data && sobradosData.data.length > 0
+      ? sobradosData.data
+      : mockProperties.filter((p) => p.type === 'Sobrado')
 
   return (
-    <section className="bg-white py-24 space-y-24">
-      {/* ── 1. Imóveis de Londrina ── */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          eyebrow="Seleção Armangni"
-          title="Os imóveis mais desejados de Londrina."
-          description="Uma curadoria criteriosa de residências em Londrina que unem localização privilegiada, arquitetura e exclusividade."
-        />
+    <div className="bg-white py-20 space-y-24">
+      {/* ── 1. Destaques (Primeiro) ── */}
+      <section className="container-page">
+        <div className="max-w-3xl space-y-4">
+          <SectionHeading
+            title="Imóveis em destaque"
+            description="Uma curadoria exclusiva de residências com alto padrão construtivo e excelente localização."
+          />
+          <div>
+            <Link
+              to="/imoveis"
+              search={{ destaque: 'true' }}
+              className={buttonClass({
+                variant: 'outline',
+                size: 'sm',
+                className: 'text-small',
+              })}
+            >
+              Ver todos os destaques
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
 
-        <div className="mt-12">
-          {londrinaProperties.length > 0 ? (
-            <PropertyCarousel properties={londrinaProperties} />
+        <div className="mt-8">
+          {isFeaturedPending && (!featuredProperties || featuredProperties.length === 0) ? (
+            <CarouselSkeleton />
+          ) : featuredProperties.length > 0 ? (
+            <PropertyCarousel properties={featuredProperties} label="Imóveis em Destaque" />
           ) : (
-            <div className="rounded-2xl border border-dashed border-neutral-200 p-12 text-center text-sm text-neutral-400">
-              Nenhum imóvel encontrado em Londrina no momento.
+            <div className="rounded-card bg-surface p-12 text-center text-body text-muted">
+              Nenhum imóvel em destaque encontrado no momento.
             </div>
           )}
         </div>
+      </section>
 
-        <div className="mt-10 flex justify-center">
-          <Link
-            to="/imoveis"
-            search={{ bairro: undefined, finalidade: undefined }}
-            className="group flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.26em] text-night-950 transition-colors hover:text-brand-600"
-          >
-            Ver todos os imóveis em Londrina
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
+      {/* ── 2. Casas em condomínio ── */}
+      <section className="container-page">
+        <div className="max-w-3xl space-y-4">
+          <SectionHeading
+            title="Casas em condomínio"
+            description="Residências exclusivas com amplos terrenos, lazer privativo e a tranquilidade que sua família busca."
+          />
+          <div>
+            <Link
+              to="/imoveis"
+              search={{ tipo: 'Casa' }}
+              className={buttonClass({
+                variant: 'outline',
+                size: 'sm',
+                className: 'text-small',
+              })}
+            >
+              Ver todas as casas
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
-      </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <hr className="border-neutral-100" />
-      </div>
-
-      {/* ── 2. Apartamentos ── */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          eyebrow="Coleção Residencial"
-          title="Apartamentos de Alto Padrão"
-          description="Ambientes integrados, segurança completa e localizações estratégicas para o seu dia a dia."
-        />
-
-        <div className="mt-12">
-          {apartmentProperties.length > 0 ? (
-            <PropertyCarousel properties={apartmentProperties} />
+        <div className="mt-8">
+          {isHousesPending && (!condoHouseProperties || condoHouseProperties.length === 0) ? (
+            <CarouselSkeleton />
+          ) : condoHouseProperties.length > 0 ? (
+            <PropertyCarousel properties={condoHouseProperties} label="Casas em Condomínio Fechado" />
           ) : (
-            <div className="rounded-2xl border border-dashed border-neutral-200 p-12 text-center text-sm text-neutral-400">
-              Nenhum apartamento encontrado no momento.
-            </div>
-          )}
-        </div>
-
-        <div className="mt-10 flex justify-center">
-          <Link
-            to="/imoveis"
-            search={{ tipo: 'Apartamento' }}
-            className="group flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.26em] text-night-950 transition-colors hover:text-brand-600"
-          >
-            Ver todos os apartamentos
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <hr className="border-neutral-100" />
-      </div>
-
-      {/* ── 3. Casas em Condomínio ── */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          eyebrow="Privacidade & Segurança"
-          title="Casas em Condomínio Fechado"
-          description="Residências exclusivas com amplos terrenos, lazer completo e a tranquilidade que sua família merece."
-        />
-
-        <div className="mt-12">
-          {houseProperties.length > 0 ? (
-            <PropertyCarousel properties={houseProperties} />
-          ) : (
-            <div className="rounded-2xl border border-dashed border-neutral-200 p-12 text-center text-sm text-neutral-400">
+            <div className="rounded-card bg-surface p-12 text-center text-body text-muted">
               Nenhuma casa em condomínio encontrada no momento.
             </div>
           )}
         </div>
+      </section>
 
-        <div className="mt-10 flex justify-center">
-          <Link
-            to="/imoveis"
-            search={{ tipo: 'Casa' }}
-            className="group flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.26em] text-night-950 transition-colors hover:text-brand-600"
-          >
-            Ver todas as casas em condomínio
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
+      {/* ── 3. Apartamentos & Coberturas ── */}
+      <section className="container-page">
+        <div className="max-w-3xl space-y-4">
+          <SectionHeading
+            title="Apartamentos e coberturas"
+            description="Ambientes integrados, segurança completa e localizações estratégicas nos bairros mais nobres."
+          />
+          <div>
+            <Link
+              to="/imoveis"
+              search={{ tipo: 'Apartamento' }}
+              className={buttonClass({
+                variant: 'outline',
+                size: 'sm',
+                className: 'text-small',
+              })}
+            >
+              Ver todos os apartamentos
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
-      </div>
-    </section>
+
+        <div className="mt-8">
+          {isApartmentsPending && (!apartmentProperties || apartmentProperties.length === 0) ? (
+            <CarouselSkeleton />
+          ) : apartmentProperties.length > 0 ? (
+            <PropertyCarousel properties={apartmentProperties} label="Apartamentos de Alto Padrão" />
+          ) : (
+            <div className="rounded-card bg-surface p-12 text-center text-body text-muted">
+              Nenhum apartamento encontrado no momento.
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── 4. Sobrados ── */}
+      <section className="container-page">
+        <div className="max-w-3xl space-y-4">
+          <SectionHeading
+            title="Sobrados exclusivos"
+            description="Espaço inteligente em múltiplos pavimentos com arquitetura contemporânea e excelente privacidade."
+          />
+          <div>
+            <Link
+              to="/imoveis"
+              search={{ tipo: 'Sobrado' }}
+              className={buttonClass({
+                variant: 'outline',
+                size: 'sm',
+                className: 'text-small',
+              })}
+            >
+              Ver todos os sobrados
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          {isSobradosPending && (!sobradoProperties || sobradoProperties.length === 0) ? (
+            <CarouselSkeleton />
+          ) : sobradoProperties.length > 0 ? (
+            <PropertyCarousel properties={sobradoProperties} label="Sobrados Exclusivos" />
+          ) : (
+            <div className="rounded-card bg-surface p-12 text-center text-body text-muted">
+              Nenhum sobrado encontrado no momento.
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
   )
 }

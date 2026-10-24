@@ -1,8 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Jost", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Cormorant Garamond", "Times New Roman", Georgia, serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Zodiak", "Iowan Old Style", Georgia, "Times New Roman", serif;
+
+  /* Cinco degraus de tipo — nada fora deles. */
+  --text-small: clamp(0.9375rem, 0.91rem + 0.1vw, 0.975rem);
+  --text-small--line-height: 1.5;
+  --text-body: clamp(1.0625rem, 1rem + 0.25vw, 1.125rem);
+  --text-body--line-height: 1.6;
+  --text-lead: clamp(1.25rem, 1.12rem + 0.6vw, 1.5rem);
+  --text-lead--line-height: 1.35;
+  --text-head: clamp(2rem, 1.35rem + 2.6vw, 3.75rem);
+  --text-head--line-height: 1.04;
+  --text-display: clamp(2.75rem, 1.4rem + 6.2vw, 7rem);
+  --text-display--line-height: 0.98;
 
   --color-brand-50: #f8f6f4;
   --color-brand-100: #efece8;
@@ -16,19 +28,54 @@
   --color-brand-900: #544c44;
   --color-brand-950: #332d28;
 
-  --color-night-700: #26262b;
-  --color-night-800: #1c1c20;
+  --color-night-600: #2e2e30;
+  --color-night-700: #262626;
+  --color-night-800: #1c1c1c;
   --color-night-900: #131316;
   --color-night-950: #0a0a0b;
+
+  /* Papéis: fundo, superfície, tinta, tinta suave. */
+  --color-paper: #f8f6f4;
+  --color-surface: #efece8;
+  --color-ink: #0a0a0b;
+  --color-muted: #5b544d;
+
+  --radius-card: 6px;
+
+  /* Sombras: limpas em repouso (sem excesso estático), ricas no hover e no que realmente flutua */
+  --shadow-card: none;
+  --shadow-card-hover: 0 16px 36px -12px rgb(10 10 11 / 0.22);
+  --shadow-float: 0 18px 48px -16px rgb(10 10 11 / 0.45);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-marquee: marquee 38s linear infinite;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
   }
 
   body {
-    @apply bg-white font-sans text-neutral-700 antialiased;
+    @apply bg-paper font-sans text-body text-ink antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   button,
@@ -45,8 +92,26 @@
     cursor: pointer;
   }
 
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 3px;
+  }
+
   ::selection {
-    @apply bg-brand-500/90 text-white;
+    @apply bg-brand-500 text-night-950;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -57,18 +122,47 @@
   }
 }
 
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Margens da página — uma só, em toda a largura. */
+@utility container-page {
+  width: 100%;
+  max-width: 88rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+@utility pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+/* Trilho que sangra até a borda da tela mantendo o 1º item na margem. */
+@utility bleed-x {
+  margin-inline: calc(-1 * clamp(1.25rem, 4vw, 3rem));
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+  scroll-padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes kenburns {
   0% {
-    transform: scale(1) translate(0, 0);
-  }
-  50% {
-    transform: scale(1.08) translate(-1%, -1%);
+    transform: scale(1);
   }
   100% {
-    transform: scale(1) translate(0, 0);
+    transform: scale(1.08);
   }
 }
 
 .kenburns {
-  animation: kenburns 25s ease-in-out infinite alternate;
+  animation: kenburns 24s var(--ease-out) infinite alternate;
 }

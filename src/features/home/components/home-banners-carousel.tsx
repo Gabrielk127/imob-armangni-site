@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from '@tanstack/react-router'
-import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from '@/components/icons'
+import { ChevronLeft, ChevronRight, ArrowRight } from '@/components/icons'
 import { IMAGES, ANUNCIAR_WHATSAPP_LINK } from '@/data/properties'
+import { buttonClass } from '@/components/ui/button'
 
 interface BannerSlide {
   id: string
@@ -18,9 +19,9 @@ interface BannerSlide {
 const slides: BannerSlide[] = [
   {
     id: 'coberturas',
-    tag: 'Exclusividade Armangni',
-    title: 'Coberturas Duplex & Penthouses',
-    description: 'Vistas panorâmicas deslumbrantes nos endereços mais cobiçados e valorizados.',
+    tag: 'Exclusividade',
+    title: 'Coberturas e Penthouses',
+    description: 'Vistas panorâmicas deslumbrantes nos endereços mais cobiçados e valorizados de Londrina.',
     ctaText: 'Explorar Coberturas',
     href: '/imoveis',
     image: IMAGES.terrace,
@@ -28,7 +29,7 @@ const slides: BannerSlide[] = [
   {
     id: 'condominios',
     tag: 'Privacidade & Lazer',
-    title: 'Casas em Condomínios Fechados',
+    title: 'Casas em condomínio',
     description: 'Residências sofisticadas com ampla área verde, segurança 24h e infraestrutura impecável.',
     ctaText: 'Conhecer Residências',
     href: '/imoveis',
@@ -36,9 +37,9 @@ const slides: BannerSlide[] = [
   },
   {
     id: 'anunciar',
-    tag: 'Atendimento Personalizado',
-    title: 'Anuncie Seu Imóvel Conosco',
-    description: 'Avaliação criteriosa, fotos profissionais e assessoria completa na compra e venda.',
+    tag: 'Atendimento Consultivo',
+    title: 'Anuncie seu patrimônio',
+    description: 'Avaliação criteriosa de mercado, produção visual de alto nível e assessoria jurídica completa.',
     ctaText: 'Anunciar no WhatsApp',
     href: ANUNCIAR_WHATSAPP_LINK,
     isExternal: true,
@@ -70,7 +71,7 @@ export function HomeBannersCarousel() {
     if (isPaused) return
     const timer = setInterval(() => {
       handleNext()
-    }, 5000)
+    }, 6000)
     return () => clearInterval(timer)
   }, [isPaused, handleNext])
 
@@ -79,7 +80,7 @@ export function HomeBannersCarousel() {
   const slideVariants = {
     enter: (dir: number) => ({
       x: dir > 0 ? '100%' : '-100%',
-      opacity: 0.4,
+      opacity: 0.3,
     }),
     center: {
       x: 0,
@@ -87,15 +88,15 @@ export function HomeBannersCarousel() {
     },
     exit: (dir: number) => ({
       x: dir > 0 ? '-100%' : '100%',
-      opacity: 0.4,
+      opacity: 0.3,
     }),
   }
 
   return (
     <section className="bg-white py-12 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="container-page">
         <div
-          className="relative h-[320px] sm:h-[380px] lg:h-[420px] w-full overflow-hidden rounded-3xl border border-white/10 shadow-2xl bg-[#1C1C1C]"
+          className="relative h-[360px] sm:h-[420px] lg:h-[460px] w-full overflow-hidden rounded-card bg-night-950"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -107,33 +108,34 @@ export function HomeBannersCarousel() {
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0 h-full w-full"
             >
-              {/* Background Image */}
+              {/* Imagem de Fundo com alto nível de detalhe */}
               <img
                 src={currentSlide.image}
                 alt={currentSlide.title}
-                className="h-full w-full object-cover filter brightness-[0.65]"
+                className="h-full w-full object-cover brightness-[0.7]"
               />
 
-              {/* Overlay Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C] via-[#1C1C1C]/60 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#1C1C1C]/90 via-[#1C1C1C]/40 to-transparent" />
+              {/* Scrim neutro vertical para legibilidade com regras do probe */}
+              <div
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(to top, rgba(10, 10, 11, 0.95) 0%, rgba(10, 10, 11, 0.45) 55%, rgba(10, 10, 11, 0.15) 100%)',
+                }}
+              />
 
-              {/* Banner Content */}
+              {/* Conteúdo do Banner */}
               <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-10 lg:p-14">
-                <div className="max-w-2xl space-y-3 sm:space-y-4">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-black/40 px-3.5 py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-[#BFB4AA] backdrop-blur-md">
-                    <Sparkles className="h-3 w-3 text-brand-400" />
-                    {currentSlide.tag}
-                  </span>
-
-                  <h3 className="font-display text-2xl sm:text-4xl lg:text-5xl font-medium tracking-wide text-white leading-tight">
+                <div className="max-w-2xl space-y-3.5">
+                  <h3 className="font-display text-head font-light leading-tight text-white">
                     {currentSlide.title}
                   </h3>
 
-                  <p className="text-xs sm:text-base font-light text-neutral-300 leading-relaxed max-w-xl">
+                  <p className="max-w-xl text-body font-light leading-relaxed text-neutral-200">
                     {currentSlide.description}
                   </p>
 
@@ -143,18 +145,26 @@ export function HomeBannersCarousel() {
                         href={currentSlide.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-3 rounded-xl bg-[#BFB4AA] px-6 py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#1C1C1C] transition-all hover:bg-white hover:shadow-lg cursor-pointer"
+                        className={buttonClass({
+                          variant: 'accent',
+                          size: 'md',
+                          className: 'font-semibold',
+                        })}
                       >
                         {currentSlide.ctaText}
-                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        <ArrowRight className="h-4 w-4" />
                       </a>
                     ) : (
                       <Link
                         to={currentSlide.href as any}
-                        className="group inline-flex items-center gap-3 rounded-xl bg-[#BFB4AA] px-6 py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#1C1C1C] transition-all hover:bg-white hover:shadow-lg cursor-pointer"
+                        className={buttonClass({
+                          variant: 'accent',
+                          size: 'md',
+                          className: 'font-semibold',
+                        })}
                       >
                         {currentSlide.ctaText}
-                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        <ArrowRight className="h-4 w-4" />
                       </Link>
                     )}
                   </div>
@@ -163,13 +173,13 @@ export function HomeBannersCarousel() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Navigation Buttons */}
-          <div className="absolute bottom-6 right-6 z-20 flex items-center gap-3">
+          {/* Botões de Navegação Anteriores/Próximos */}
+          <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2.5">
             <button
               type="button"
               onClick={handlePrev}
               aria-label="Slide anterior"
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-all hover:border-brand-400 hover:bg-brand-400 hover:text-[#1C1C1C]"
+              className="grid h-11 w-11 place-items-center rounded-card border border-white/20 bg-night-950/70 text-white backdrop-blur-xs transition-colors hover:border-white hover:bg-white hover:text-night-950"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -177,34 +187,27 @@ export function HomeBannersCarousel() {
               type="button"
               onClick={handleNext}
               aria-label="Próximo slide"
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-all hover:border-brand-400 hover:bg-brand-400 hover:text-[#1C1C1C]"
+              className="grid h-11 w-11 place-items-center rounded-card border border-white/20 bg-night-950/70 text-white backdrop-blur-xs transition-colors hover:border-white hover:bg-white hover:text-night-950"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
           </div>
 
-          {/* Indicator Dots */}
-          <div className="absolute top-6 right-6 z-20 flex items-center gap-2">
+          {/* Indicadores de Slide */}
+          <div className="absolute top-6 right-6 z-20 flex items-center gap-1.5" aria-hidden>
             {slides.map((slide, idx) => (
-              /*
-                O ponto continua com 8px, mas o alvo de toque não: o botão
-                ganha 44px de altura e o traço fica num <span> interno. Antes o
-                clicável era o próprio ponto de 8×8 — metade do mínimo
-                recomendado, e difícil de acertar com o polegar.
-              */
               <button
                 key={slide.id}
                 type="button"
                 onClick={() => goToSlide(idx)}
                 aria-label={`Ir para o slide ${idx + 1}`}
-                aria-current={idx === currentIndex}
                 className="flex h-11 items-center px-1"
               >
                 <span
-                  className={`block h-2 rounded-full transition-all duration-300 ${
+                  className={`block h-1.5 rounded-full transition-all duration-300 ${
                     idx === currentIndex
-                      ? 'w-8 bg-[#BFB4AA]'
-                      : 'w-2 bg-white/40 hover:bg-white/70'
+                      ? 'w-7 bg-brand-400'
+                      : 'w-2 bg-white/40 hover:bg-white/80'
                   }`}
                 />
               </button>

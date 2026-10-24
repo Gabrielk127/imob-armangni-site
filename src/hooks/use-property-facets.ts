@@ -1,22 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { findNeighborhoods, findPropertyTypes } from '@/api/properties.api'
+import { neighborhoodsQuery, propertyTypesQuery } from '@/api/query-options'
 
 /**
  * Opções dos filtros vindas da carteira publicada — nada de lista fixa no
  * código, que ficaria desalinhada do que a imobiliária tem no ar.
  */
 export function usePropertyTypes() {
-  return useQuery({
-    queryKey: ['property-types'],
-    queryFn: findPropertyTypes,
-    staleTime: 30 * 60 * 1000,
-  })
+  return useQuery(propertyTypesQuery())
 }
 
 export function useNeighborhoods() {
-  return useQuery({
-    queryKey: ['neighborhoods'],
-    queryFn: findNeighborhoods,
-    staleTime: 30 * 60 * 1000,
-  })
+  return useQuery(neighborhoodsQuery())
 }

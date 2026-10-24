@@ -34,6 +34,7 @@ export interface Property {
   videoUrl?: string
   features: string[]
   condoFeatures?: string[]
+  condominium?: string
 }
 
 const img = (id: string, w = 1400) =>
@@ -586,7 +587,9 @@ export const testimonials = [
   },
 ]
 
-export const WHATSAPP = '5543991708520'
+// TEMPORÁRIO (teste do rastreamento com a TechLeads): número do Gabriel.
+// Voltar para '5543991708520' antes de publicar.
+export const WHATSAPP = '5543998377239'
 export const PHONE = '(43) 99170-8520'
 export const EMAIL = 'contato.armangni@gmail.com'
 export const ADDRESS = 'Avenida Adhemar Pereira de Barros, 630 · Bela Suiça, Londrina - PR'

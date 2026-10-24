@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useListingsSearch } from '@/hooks/use-listings-search'
-import { ChevronDown, ChevronLeft, ChevronRight, Map, Search, SlidersHorizontal, X } from '@/components/icons'
+import { ChevronDown, ChevronLeft, ChevronRight, Search, SlidersHorizontal, X } from '@/components/icons'
 import { usePropertiesList } from '@/hooks/use-properties-list'
 import { usePropertyTypes } from '@/hooks/use-property-facets'
 import { PropertyCard } from '@/components/property-card'
 import { ListingsFilterSidebar } from '@/features/listings/components/listings-filter-sidebar'
 import type { FilterState } from '@/features/listings/components/listings-filter-sidebar'
+import { Skeleton } from '@/components/ui/skeleton'
+import { buttonClass } from '@/components/ui/button'
 
 const PAGE_SIZE = 9
 
@@ -39,7 +41,7 @@ function getPaginationRange(currentPage: number, totalPages: number) {
 const sortLabels: Record<SortKey, string> = {
   'preco-desc': 'Maior preço',
   'preco-asc': 'Menor preço',
-  'area-desc': 'Maior área',
+  'area-desc': 'Maior área útil',
 }
 
 export function Listings() {
@@ -77,8 +79,7 @@ export function Listings() {
     (item) => item.name === currentFilters.type
   )?.id
 
-  // Filtro, ordenação e paginação acontecem na API — a tela só traduz os
-  // parâmetros da URL para a query pública.
+  // Filtro, ordenação e paginação acontecem na API
   const [sortBy, sortOrder] =
     sort === 'area-desc'
       ? (['area', 'desc'] as const)
@@ -88,28 +89,28 @@ export function Listings() {
 
   const { data, isPending, isPaused, isError, isPlaceholderData, refetch } =
     usePropertiesList({
-    page,
-    limit: PAGE_SIZE,
-    search: query || undefined,
-    purpose:
-      currentFilters.purpose === 'venda'
-        ? 'SALE'
-        : currentFilters.purpose === 'aluguel'
-          ? 'RENT'
-          : undefined,
-    typeId: currentFilters.type ? (typeId ?? '__sem-correspondencia__') : undefined,
-    neighborhood: currentFilters.neighborhood,
-    minPrice: toNumber(currentFilters.minPrice),
-    maxPrice: toNumber(currentFilters.maxPrice),
-    minArea: toNumber(currentFilters.minArea),
-    maxArea: toNumber(currentFilters.maxArea),
-    minBedrooms: toNumber(currentFilters.minBedrooms),
-    minSuites: toNumber(currentFilters.minSuites),
-    minParkingSpaces: toNumber(currentFilters.minParking),
-    isFeatured: currentFilters.isFeatured || undefined,
-    sortBy,
-    sortOrder,
-  })
+      page,
+      limit: PAGE_SIZE,
+      search: query || undefined,
+      purpose:
+        currentFilters.purpose === 'venda'
+          ? 'SALE'
+          : currentFilters.purpose === 'aluguel'
+            ? 'RENT'
+            : undefined,
+      typeId: currentFilters.type ? (typeId ?? '__sem-correspondencia__') : undefined,
+      neighborhood: currentFilters.neighborhood,
+      minPrice: toNumber(currentFilters.minPrice),
+      maxPrice: toNumber(currentFilters.maxPrice),
+      minArea: toNumber(currentFilters.minArea),
+      maxArea: toNumber(currentFilters.maxArea),
+      minBedrooms: toNumber(currentFilters.minBedrooms),
+      minSuites: toNumber(currentFilters.minSuites),
+      minParkingSpaces: toNumber(currentFilters.minParking),
+      isFeatured: currentFilters.isFeatured || undefined,
+      sortBy,
+      sortOrder,
+    })
 
   const results = data?.data ?? []
   const total = data?.meta.total ?? 0
@@ -117,7 +118,7 @@ export function Listings() {
   const pageItems = results
 
   const heading =
-    currentFilters.purpose === 'aluguel' ? 'Imóveis para alugar' : 'Imóveis para comprar'
+    currentFilters.purpose === 'aluguel' ? 'Imóveis para alugar' : 'Imóveis à venda'
 
   const activeFiltersCount = Object.entries(currentFilters).filter(
     ([_, v]) => v !== undefined && v !== false
@@ -156,26 +157,27 @@ export function Listings() {
   }
 
   return (
-    <>
-      <section className="border-b border-neutral-200 bg-neutral-50 pt-28 pb-10 sm:pt-36 sm:pb-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="mb-3 flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.45em] text-brand-500">
-            <span className="h-px w-10 bg-brand-500/60" />
+    <div className="min-h-screen bg-paper pb-24">
+      {/* Cabeçalho da Listagem */}
+      <section className="bg-surface/60 pt-28 pb-10 sm:pt-36 sm:pb-12">
+        <div className="container-page">
+          <p className="text-small font-medium tracking-wide text-brand-800">
             Portfólio Armangni
           </p>
-          <h1 className="font-display text-4xl font-medium text-night-950 sm:text-5xl">
-            {currentFilters.type ?? heading}
-            {query && <span className="text-neutral-400"> · “{params.get('q')}”</span>}
+          <h1 className="mt-2 font-display text-head font-light tracking-tight text-ink">
+            {currentFilters.type ? `${currentFilters.type}s` : heading}
+            {query && <span className="text-muted"> · “{query}”</span>}
           </h1>
-          <p className="mt-3 text-sm text-neutral-500">
-            Foram encontrados <span className="font-semibold text-night-950">{total}</span>{' '}
-            {total === 1 ? 'imóvel' : 'imóveis'} para sua busca.
+          <p className="mt-2 text-body text-muted">
+            Encontramos <span className="font-semibold text-ink">{total}</span>{' '}
+            {total === 1 ? 'imóvel disponível' : 'imóveis disponíveis'} de acordo com seus critérios.
           </p>
         </div>
       </section>
 
-      <section className="bg-neutral-50/50 py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Seção Principal de Filtros e Resultados */}
+      <section className="py-8">
+        <div className="container-page">
           <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
             {/* Sidebar Lateral no Desktop */}
             <aside className="hidden lg:block lg:w-72 xl:w-80 lg:shrink-0 sticky lg:top-24">
@@ -186,17 +188,17 @@ export function Listings() {
               />
             </aside>
 
-            {/* Conteúdo Principal (Barra de ferramentas + Grid de Imóveis) */}
+            {/* Conteúdo Principal (Barra de ferramentas + Grid) */}
             <main className="flex-1 min-w-0 space-y-6">
-              {/* Barra de Ferramentas */}
-              <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-3 shadow-sm border border-neutral-200">
-                <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-neutral-200 bg-neutral-50/50 px-3.5 py-2">
-                  <Search className="h-4 w-4 shrink-0 text-neutral-400" />
+              {/* Barra de Ferramentas Superior */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-card bg-white p-3 shadow-[var(--shadow-card)]">
+                <label className="flex w-full sm:flex-1 items-center gap-3 rounded-card bg-surface/60 px-3.5 py-2.5">
+                  <Search className="h-4 w-4 shrink-0 text-muted" />
                   <input
                     defaultValue={params.get('q') ?? ''}
                     key={params.get('q') ?? ''}
-                    placeholder="Buscar por bairro, cidade, código..."
-                    className="w-full bg-transparent text-xs text-night-950 outline-none placeholder:text-neutral-400 sm:text-sm"
+                    placeholder="Bairro, cidade, empreendimento, código..."
+                    className="w-full bg-transparent text-body text-ink outline-none placeholder:text-muted"
                     onKeyDown={(event) => {
                       if (event.key !== 'Enter') return
                       const value = (event.target as HTMLInputElement).value.trim()
@@ -208,132 +210,103 @@ export function Listings() {
                   />
                 </label>
 
-                {/* Botão de Filtros no Mobile */}
-                <button
-                  type="button"
-                  onClick={() => setIsMobileFilterOpen(true)}
-                  className="flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-night-950 transition-colors hover:bg-brand-400 lg:hidden"
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                  Filtros {activeFiltersCount > 0 && `(${activeFiltersCount})`}
-                </button>
-
-                <label className="relative flex items-center rounded-xl border border-neutral-200 bg-white">
-                  <span className="sr-only">Ordenar por</span>
-                  <select
-                    value={sort}
-                    onChange={(event) => setSort(event.target.value as SortKey)}
-                    className="appearance-none bg-transparent py-2 pl-3.5 pr-8 text-xs font-medium text-night-950 outline-none sm:text-sm"
+                <div className="flex items-center gap-3 justify-between sm:justify-start">
+                  {/* Botão de Filtros no Mobile */}
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileFilterOpen(true)}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-card bg-brand-500 px-4 py-2.5 text-small font-semibold tracking-wide text-night-950 transition-colors hover:bg-brand-400 lg:hidden"
                   >
-                    {Object.entries(sortLabels).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 h-4 w-4 text-neutral-400" />
-                </label>
+                    <SlidersHorizontal className="h-4 w-4" />
+                    <span>Filtros {activeFiltersCount > 0 && `(${activeFiltersCount})`}</span>
+                  </button>
 
-                <button
-                  type="button"
-                  className="hidden sm:flex items-center gap-2 rounded-xl border border-neutral-200 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-neutral-600 transition-colors hover:border-night-950 hover:text-night-950"
-                >
-                  <Map className="h-4 w-4" />
-                  Mapa
-                </button>
+                  {/* Ordenação */}
+                  <label className="relative flex-1 sm:flex-none flex items-center justify-between rounded-card bg-surface/60">
+                    <span className="sr-only">Ordenar imóveis por</span>
+                    <select
+                      value={sort}
+                      onChange={(event) => setSort(event.target.value as SortKey)}
+                      className="w-full sm:w-auto appearance-none bg-transparent py-2.5 pl-3.5 pr-8 text-small font-medium text-ink outline-none cursor-pointer"
+                    >
+                      {Object.entries(sortLabels).map(([value, label]) => (
+                        <option key={value} value={value} className="text-ink">
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-2.5 h-4 w-4 text-muted" />
+                  </label>
+                </div>
               </div>
 
               {/* Tags de Filtros Ativos */}
               {activeFiltersCount > 0 && (
-                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-neutral-200/80 bg-white p-3 shadow-xs">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                <div className="flex flex-wrap items-center gap-2 rounded-card bg-white p-3 shadow-xs">
+                  <span className="text-small font-medium text-muted">
                     Filtros ativos:
                   </span>
                   {currentFilters.purpose && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
+                    <span className="inline-flex items-center gap-1.5 rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
                       {currentFilters.purpose === 'venda' ? 'Comprar' : 'Alugar'}
-                      <button type="button" onClick={() => removeFilterKey('finalidade')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
+                      <button type="button" onClick={() => removeFilterKey('finalidade')} aria-label="Remover filtro de finalidade">
+                        <X className="h-3.5 w-3.5 text-muted hover:text-ink" />
                       </button>
                     </span>
                   )}
                   {currentFilters.type && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
+                    <span className="inline-flex items-center gap-1.5 rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
                       {currentFilters.type}
-                      <button type="button" onClick={() => removeFilterKey('tipo')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
+                      <button type="button" onClick={() => removeFilterKey('tipo')} aria-label="Remover filtro de tipo">
+                        <X className="h-3.5 w-3.5 text-muted hover:text-ink" />
                       </button>
                     </span>
                   )}
                   {currentFilters.neighborhood && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
+                    <span className="inline-flex items-center gap-1.5 rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
                       {currentFilters.neighborhood}
-                      <button type="button" onClick={() => removeFilterKey('bairro')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
+                      <button type="button" onClick={() => removeFilterKey('bairro')} aria-label="Remover filtro de bairro">
+                        <X className="h-3.5 w-3.5 text-muted hover:text-ink" />
                       </button>
                     </span>
                   )}
                   {currentFilters.minBedrooms && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
+                    <span className="inline-flex items-center gap-1.5 rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
                       {currentFilters.minBedrooms}+ quartos
-                      <button type="button" onClick={() => removeFilterKey('quartos')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
+                      <button type="button" onClick={() => removeFilterKey('quartos')} aria-label="Remover filtro de quartos">
+                        <X className="h-3.5 w-3.5 text-muted hover:text-ink" />
                       </button>
                     </span>
                   )}
                   {currentFilters.minSuites && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
+                    <span className="inline-flex items-center gap-1.5 rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
                       {currentFilters.minSuites}+ suítes
-                      <button type="button" onClick={() => removeFilterKey('suites')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
+                      <button type="button" onClick={() => removeFilterKey('suites')} aria-label="Remover filtro de suítes">
+                        <X className="h-3.5 w-3.5 text-muted hover:text-ink" />
                       </button>
                     </span>
                   )}
                   {currentFilters.minParking && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
+                    <span className="inline-flex items-center gap-1.5 rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
                       {currentFilters.minParking}+ vagas
-                      <button type="button" onClick={() => removeFilterKey('vagas')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
+                      <button type="button" onClick={() => removeFilterKey('vagas')} aria-label="Remover filtro de vagas">
+                        <X className="h-3.5 w-3.5 text-muted hover:text-ink" />
                       </button>
                     </span>
                   )}
                   {currentFilters.minPrice && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
-                      Min: R$ {Number(currentFilters.minPrice).toLocaleString('pt-BR')}
-                      <button type="button" onClick={() => removeFilterKey('minPreco')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
+                    <span className="inline-flex items-center gap-1.5 rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
+                      Mín: R$ {Number(currentFilters.minPrice).toLocaleString('pt-BR')}
+                      <button type="button" onClick={() => removeFilterKey('minPreco')} aria-label="Remover filtro de preço mínimo">
+                        <X className="h-3.5 w-3.5 text-muted hover:text-ink" />
                       </button>
                     </span>
                   )}
                   {currentFilters.maxPrice && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
-                      Max: R$ {Number(currentFilters.maxPrice).toLocaleString('pt-BR')}
-                      <button type="button" onClick={() => removeFilterKey('maxPreco')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
-                      </button>
-                    </span>
-                  )}
-                  {currentFilters.minArea && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
-                      Min: {currentFilters.minArea} m²
-                      <button type="button" onClick={() => removeFilterKey('minArea')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
-                      </button>
-                    </span>
-                  )}
-                  {currentFilters.maxArea && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
-                      Max: {currentFilters.maxArea} m²
-                      <button type="button" onClick={() => removeFilterKey('maxArea')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
-                      </button>
-                    </span>
-                  )}
-                  {currentFilters.isFeatured && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-night-950">
-                      Destaques
-                      <button type="button" onClick={() => removeFilterKey('destaque')}>
-                        <X className="h-3 w-3 text-neutral-400 hover:text-night-950" />
+                    <span className="inline-flex items-center gap-1.5 rounded-card bg-surface px-3 py-1 text-small font-medium text-ink">
+                      Máx: R$ {Number(currentFilters.maxPrice).toLocaleString('pt-BR')}
+                      <button type="button" onClick={() => removeFilterKey('maxPreco')} aria-label="Remover filtro de preço máximo">
+                        <X className="h-3.5 w-3.5 text-muted hover:text-ink" />
                       </button>
                     </span>
                   )}
@@ -341,14 +314,14 @@ export function Listings() {
                   <button
                     type="button"
                     onClick={() => setParams(new URLSearchParams())}
-                    className="ml-auto text-[11px] font-semibold uppercase tracking-wider text-brand-600 hover:underline"
+                    className="ml-auto text-small font-semibold text-brand-800 hover:underline"
                   >
                     Limpar todos
                   </button>
                 </div>
               )}
 
-              {/* Grid de Imóveis (3 cards por linha) */}
+              {/* Grid de Imóveis */}
               {isPending && !isPaused ? (
                 <div
                   className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
@@ -358,54 +331,62 @@ export function Listings() {
                   {Array.from({ length: 6 }, (_, i) => (
                     <div
                       key={i}
-                      className="overflow-hidden rounded-2xl border border-neutral-200 bg-white"
+                      className="overflow-hidden rounded-card bg-white p-4 shadow-[var(--shadow-card)] space-y-3"
                     >
-                      <div className="aspect-[4/3] w-full animate-pulse bg-neutral-100" />
-                      <div className="space-y-3 p-5">
-                        <div className="h-3 w-24 animate-pulse rounded bg-neutral-100" />
-                        <div className="h-5 w-3/4 animate-pulse rounded bg-neutral-100" />
-                        <div className="h-4 w-1/2 animate-pulse rounded bg-neutral-100" />
-                      </div>
+                      <Skeleton className="aspect-[4/3] w-full" />
+                      <Skeleton className="h-5 w-1/3" />
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
                     </div>
                   ))}
                 </div>
               ) : isError || isPaused ? (
-                <div className="rounded-2xl border border-neutral-200 bg-white py-24 text-center">
-                  <p className="font-display text-3xl text-night-950">
-                    Não foi possível carregar os imóveis.
-                  </p>
-                  <p className="mt-3 text-sm text-neutral-500">
+                <div className="rounded-card bg-white p-16 text-center shadow-[var(--shadow-card)]">
+                  <h3 className="font-display text-2xl font-light text-ink">
+                    Não foi possível carregar os imóveis no momento.
+                  </h3>
+                  <p className="mt-2 text-body text-muted">
                     {isPaused
-                      ? 'Você parece estar sem conexão. Assim que a internet voltar, tente de novo.'
+                      ? 'Você parece estar sem conexão com a internet. Tente novamente assim que reconectar.'
                       : 'Verifique sua conexão e tente novamente.'}
                   </p>
                   <button
                     type="button"
                     onClick={() => void refetch()}
-                    className="mt-6 border border-night-950 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-night-950 transition-colors hover:bg-night-950 hover:text-white"
+                    className={buttonClass({
+                      variant: 'primary',
+                      size: 'md',
+                      className: 'mt-6 font-semibold',
+                    })}
                   >
                     Tentar novamente
                   </button>
                 </div>
               ) : pageItems.length === 0 ? (
-                <div className="rounded-2xl border border-neutral-200 bg-white py-24 text-center">
-                  <p className="font-display text-3xl text-night-950">Nenhum imóvel encontrado.</p>
-                  <p className="mt-3 text-sm text-neutral-500">
-                    Ajuste os filtros laterais ou fale com um de nossos especialistas.
+                <div className="rounded-card bg-white p-16 text-center shadow-[var(--shadow-card)]">
+                  <h3 className="font-display text-2xl font-light text-ink">
+                    Nenhum imóvel encontrado para os filtros selecionados.
+                  </h3>
+                  <p className="mt-2 text-body text-muted">
+                    Tente relaxar alguns filtros laterais ou busque por outra região de Londrina.
                   </p>
                   {activeFiltersCount > 0 && (
                     <button
                       type="button"
                       onClick={() => setParams(new URLSearchParams())}
-                      className="mt-6 border border-night-950 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-night-950 transition-colors hover:bg-night-950 hover:text-white"
+                      className={buttonClass({
+                        variant: 'primary',
+                        size: 'md',
+                        className: 'mt-6 font-semibold',
+                      })}
                     >
-                      Limpar filtros
+                      Limpar todos os filtros
                     </button>
                   )}
                 </div>
               ) : (
                 <div
-                  className={`grid gap-6 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${
+                  className={`grid gap-6 transition-opacity duration-300 sm:grid-cols-2 lg:grid-cols-3 ${
                     isPlaceholderData ? 'opacity-60' : ''
                   }`}
                 >
@@ -428,7 +409,7 @@ export function Listings() {
                     }}
                     disabled={page === 1}
                     aria-label="Página anterior"
-                    className="grid h-10 w-10 place-items-center rounded-xl border border-neutral-200 bg-white text-neutral-600 transition-colors hover:border-night-950 hover:text-night-950 disabled:pointer-events-none disabled:opacity-40"
+                    className="grid h-11 w-11 place-items-center rounded-card border border-neutral-200 bg-white text-ink transition-colors hover:border-ink disabled:pointer-events-none disabled:opacity-30"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -437,7 +418,7 @@ export function Listings() {
                     item === 'ellipsis' ? (
                       <span
                         key={`ellipsis-${idx}`}
-                        className="grid h-10 w-8 place-items-center text-sm font-medium text-neutral-400 select-none"
+                        className="grid h-11 w-8 place-items-center text-body font-medium text-muted select-none"
                       >
                         •••
                       </span>
@@ -449,10 +430,10 @@ export function Listings() {
                           setPage(item)
                           window.scrollTo({ top: 0, behavior: 'smooth' })
                         }}
-                        className={`grid h-10 w-10 place-items-center rounded-xl text-sm font-medium transition-colors ${
+                        className={`grid h-11 w-11 place-items-center rounded-card text-small font-medium transition-colors ${
                           item === page
-                            ? 'bg-night-950 text-white shadow-sm'
-                            : 'border border-neutral-200 bg-white text-neutral-600 hover:border-night-950 hover:text-night-950'
+                            ? 'bg-night-950 text-white shadow-xs'
+                            : 'border border-neutral-200 bg-white text-ink hover:border-ink'
                         }`}
                       >
                         {item}
@@ -470,7 +451,7 @@ export function Listings() {
                     }}
                     disabled={page === totalPages}
                     aria-label="Próxima página"
-                    className="grid h-10 w-10 place-items-center rounded-xl border border-neutral-200 bg-white text-neutral-600 transition-colors hover:border-night-950 hover:text-night-950 disabled:pointer-events-none disabled:opacity-40"
+                    className="grid h-11 w-11 place-items-center rounded-card border border-neutral-200 bg-white text-ink transition-colors hover:border-ink disabled:pointer-events-none disabled:opacity-30"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
@@ -481,7 +462,7 @@ export function Listings() {
         </div>
       </section>
 
-      {/* Mobile Drawer Sidebar */}
+      {/* Drawer de Filtros Mobile */}
       <ListingsFilterSidebar
         mode="mobile"
         currentFilters={currentFilters}
@@ -489,6 +470,6 @@ export function Listings() {
         isMobileOpen={isMobileFilterOpen}
         onMobileClose={() => setIsMobileFilterOpen(false)}
       />
-    </>
+    </div>
   )
 }
