@@ -34,6 +34,7 @@ interface PublicPropertyListItem {
   code: string
   title: string
   description: string | null
+  videoUrl?: string | null
   purpose: 'SALE' | 'RENT' | 'SALE_AND_RENT'
   isFeatured: boolean
   type: { id: string; name: string } | null
@@ -103,7 +104,9 @@ function mainUnit(units: PublicUnit[]): PublicUnit | undefined {
 }
 
 function priceOf(unit?: PublicUnit): number | null {
-  return unit?.salePrice ?? unit?.rentPrice ?? null
+  const price = unit?.salePrice || unit?.rentPrice || null
+  if (!price || price <= 0) return null
+  return price
 }
 
 /** Em localização aproximada a API não envia rua nem número. */
@@ -150,8 +153,10 @@ function toProperty(
     images: extra.images ?? (item.coverImage ? [item.coverImage] : []),
     thumbnails: extra.thumbnails,
     featured: item.isFeatured,
+    videoUrl: item.videoUrl ?? undefined,
     features: extra.features ?? [],
     condoFeatures: extra.condoFeatures,
+    condominium: item.condominium?.name ?? undefined,
   }
 }
 

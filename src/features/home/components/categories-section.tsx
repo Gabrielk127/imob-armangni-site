@@ -45,7 +45,7 @@ export function CategoriesSection() {
     <section className="bg-neutral-50 py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Portfólio"
+          category="Portfólio"
           title="Imóveis exclusivos"
           description="Residências escolhidas a dedo para quem procura mais do que um endereço."
         />

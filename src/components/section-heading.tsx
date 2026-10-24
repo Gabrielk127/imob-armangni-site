@@ -1,44 +1,48 @@
+import { cn } from '@/lib/utils'
+
 interface SectionHeadingProps {
+  category?: string
   eyebrow?: string
   title: string
   description?: string
   align?: 'center' | 'left'
   dark?: boolean
+  className?: string
 }
 
 export function SectionHeading({
-  eyebrow,
   title,
   description,
-  align = 'center',
+  align = 'left',
   dark = false,
+  className,
 }: SectionHeadingProps) {
   const centered = align === 'center'
 
   return (
-    <div className={`max-w-2xl ${centered ? 'mx-auto text-center' : ''}`}>
-      {eyebrow && (
-        <p
-          className={`mb-4 flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.45em] text-brand-500 ${
-            centered ? 'justify-center' : ''
-          }`}
-        >
-          {!centered && <span className="h-px w-10 bg-brand-500/60" />}
-          {eyebrow}
-        </p>
+    <div
+      className={cn(
+        'max-w-3xl space-y-2.5',
+        centered ? 'mx-auto text-center' : 'text-left',
+        className
       )}
+    >
+
       <h2
-        className={`font-display text-4xl font-medium leading-tight sm:text-[44px] ${
-          dark ? 'text-white' : 'text-night-950'
-        }`}
+        className={cn(
+          'font-display text-head font-light leading-[1.08] tracking-tight',
+          dark ? 'text-white' : 'text-ink'
+        )}
       >
         {title}
       </h2>
+
       {description && (
         <p
-          className={`mt-4 text-[15px] font-light leading-relaxed ${
-            dark ? 'text-neutral-300' : 'text-neutral-500'
-          }`}
+          className={cn(
+            'text-body leading-relaxed max-w-2xl',
+            dark ? 'text-neutral-300' : 'text-muted'
+          )}
         >
           {description}
         </p>

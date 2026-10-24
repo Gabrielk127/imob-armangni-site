@@ -1,14 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
-import { findPropertyByCode } from '@/api/properties.api'
-import { propertyKeys } from '@/api/query-keys'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { findListedProperty, propertyDetailQuery } from '@/api/query-options'
 
 export function usePropertyDetails(code: string) {
+  const queryClient = useQueryClient()
+
   return useQuery({
-    queryKey: propertyKeys.detail(code),
-    queryFn: () => findPropertyByCode(code),
+    ...propertyDetailQuery(code),
     enabled: !!code,
-    // 404 é resposta legítima (imóvel fora do site) — não vale repetir
-    retry: false,
-    staleTime: 5 * 60 * 1000,
+    // Dados do card enquanto o detalhe completo carrega — ver `findListedProperty`.
+    placeholderData: () => findListedProperty(queryClient, code),
   })
 }

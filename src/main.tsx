@@ -4,6 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import './index.css'
 import { queryClient } from '@/lib/query-client'
+import { loadTracking } from '@/lib/tracking'
 import { routeTree } from './routeTree.gen'
 
 const router = createRouter({
@@ -22,6 +23,8 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
+
+loadTracking()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

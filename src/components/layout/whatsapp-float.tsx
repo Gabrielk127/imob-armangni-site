@@ -4,13 +4,13 @@ import { WHATSAPP } from '@/data/properties'
 export function WhatsAppFloat() {
   return (
     <a
-      href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Olá! Gostaria de falar com um especialista.')}`}
+      href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Olá! Gostaria de falar com um especialista da Armangni.')}`}
       target="_blank"
       rel="noreferrer"
-      aria-label="Falar pelo WhatsApp"
-      className="fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/20 transition-transform duration-300 hover:scale-110"
+      aria-label="Falar com especialista pelo WhatsApp"
+      className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-4 sm:bottom-6 sm:right-6 z-40 grid h-13 w-13 sm:h-14 sm:w-14 place-items-center rounded-full bg-[#1fae55] text-white shadow-[var(--shadow-float)] transition-all duration-300 hover:scale-105 active:scale-95 focus-visible:outline-offset-4"
     >
-      <MessageCircle className="h-7 w-7 fill-white" />
+      <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7 fill-white" />
     </a>
   )
 }

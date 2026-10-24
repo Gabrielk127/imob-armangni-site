@@ -26,3 +26,5 @@ dist-ssr
 # TanStack Router
 .tanstack
 
+# Taste Skill audit outputs
+.taste-skill/
