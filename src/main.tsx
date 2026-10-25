@@ -24,7 +24,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
-loadTracking()
+void loadTracking()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
